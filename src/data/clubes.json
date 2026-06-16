@@ -1,0 +1,14 @@
+[
+  { "id": 1, "nome": "Flamengo" },
+  { "id": 2, "nome": "Palmeiras" },
+  { "id": 3, "nome": "Corinthians" },
+  { "id": 4, "nome": "São Paulo" },
+  { "id": 5, "nome": "Grêmio" },
+  { "id": 6, "nome": "Internacional" },
+  { "id": 7, "nome": "Atlético Mineiro" },
+  { "id": 8, "nome": "Cruzeiro" },
+  { "id": 9, "nome": "Vasco da Gama" },
+  { "id": 10, "nome": "Botafogo" },
+  { "id": 11, "nome": "Fluminense" },
+  { "id": 12, "nome": "Santos" }
+]

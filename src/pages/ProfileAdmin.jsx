@@ -20,6 +20,7 @@ function ProfileAdmin() {
       <p>Email: {user.email}</p>
       <p>Data de nascimento: {user.dataNascimento}</p>
       <p>CPF: {user.cpf}</p>
+      <Link to="/admin/dashboard" state={{ user }}>Gerenciar eventos</Link>
       <Link to="/">Sair</Link>
     </div>
   )
