@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import clubes from '../data/clubes.json'
 
 const API = 'http://localhost:3001/events'
+const CLIENTS = 'http://localhost:3001/clients'
 const ERRO_CONEXAO =
   'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
@@ -59,6 +60,7 @@ function AdminDashboard() {
             dataHoraPartida,
             inicioApostas,
             apostas: [],
+            fechado: false,
           }),
         })
       } else {
@@ -92,6 +94,47 @@ function AdminDashboard() {
   async function excluir(id) {
     try {
       await fetch(`${API}/${id}`, { method: 'DELETE' })
+      carregarEventos()
+    } catch {
+      alert(ERRO_CONEXAO)
+    }
+  }
+
+  // fecha o evento para novas apostas
+  async function fecharApostas(ev) {
+    try {
+      await fetch(`${API}/${ev.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fechado: true }),
+      })
+      carregarEventos()
+    } catch {
+      alert(ERRO_CONEXAO)
+    }
+  }
+
+  // gera o resultado: sorteia o vencedor e paga os ganhadores (valor * odd)
+  async function gerarResultado(ev) {
+    const vencedorId = Math.random() < 0.5 ? ev.clubeCasaId : ev.clubeForaId
+    try {
+      for (const ap of ev.apostas || []) {
+        if (ap.vencedorId === vencedorId) {
+          const cliente = await (await fetch(`${CLIENTS}/${ap.clientId}`)).json()
+          const premio = (ap.valor || 0) * ap.odd
+          await fetch(`${CLIENTS}/${ap.clientId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ saldo: (cliente.saldo || 0) + premio }),
+          })
+        }
+      }
+      await fetch(`${API}/${ev.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resolvido: true, resultado: vencedorId }),
+      })
+      alert('Resultado gerado! Vencedor: ' + nomeClube(vencedorId))
       carregarEventos()
     } catch {
       alert(ERRO_CONEXAO)
@@ -184,7 +227,22 @@ function AdminDashboard() {
               </strong>
               <p>Partida: {formatarData(ev.dataHoraPartida)}</p>
               <p>Apostas abrem: {formatarData(ev.inicioApostas)}</p>
-              <p>Apostas: {ev.apostas.length}</p>
+              <p>Apostas: {(ev.apostas || []).length}</p>
+
+              {ev.resolvido ? (
+                <p>Resultado: {nomeClube(ev.resultado)}</p>
+              ) : (
+                <>
+                  {ev.fechado && <p>Apostas fechadas</p>}
+                  <button onClick={() => fecharApostas(ev)} disabled={ev.fechado}>
+                    Fechar para apostas
+                  </button>
+                  <button onClick={() => gerarResultado(ev)} disabled={!ev.fechado}>
+                    Gerar resultado
+                  </button>
+                </>
+              )}
+
               <button onClick={() => editar(ev)}>Editar</button>
               <button onClick={() => excluir(ev.id)}>Excluir</button>
             </li>

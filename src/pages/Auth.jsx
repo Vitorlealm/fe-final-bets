@@ -35,7 +35,7 @@ function Auth() {
       await fetch(API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, dataNascimento, cpf, senha, tipo: 'cliente' }),
+        body: JSON.stringify({ nome, email, dataNascimento, cpf, senha, tipo: 'cliente', saldo: 0 }),
       })
       alert('Cadastrado com sucesso! Agora faça login.')
       setIsLogin(true)
@@ -50,7 +50,7 @@ function Auth() {
       const resposta = await fetch(`${API}?email=${email}&senha=${senha}`)
       const dados = await resposta.json()
       if (dados.length > 0) {
-        navigate('/profile', { state: { user: dados[0] } })
+        navigate('/cliente/dashboard', { state: { user: dados[0] } })
       } else {
         alert('Email ou senha inválidos')
       }

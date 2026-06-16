@@ -6,6 +6,7 @@ import AdminCadastro from './pages/AdminCadastro'
 import AdminLogin from './pages/AdminLogin'
 import ProfileAdmin from './pages/ProfileAdmin'
 import AdminDashboard from './pages/AdminDashboard'
+import ClienteDashboard from './pages/ClienteDashboard'
 import './App.css'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/profile" element={<ProfileCliente />} />
+      <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
       <Route path="/admin/cadastro" element={<AdminCadastro />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/profile" element={<ProfileAdmin />} />

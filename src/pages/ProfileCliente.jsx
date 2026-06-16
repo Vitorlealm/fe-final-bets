@@ -20,6 +20,7 @@ function ProfileCliente() {
       <p>Email: {user.email}</p>
       <p>Data de nascimento: {user.dataNascimento}</p>
       <p>CPF: {user.cpf}</p>
+      <Link to="/cliente/dashboard" state={{ user }}>Voltar ao dashboard</Link>
       <Link to="/">Sair</Link>
     </div>
   )
