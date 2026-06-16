@@ -1,18 +1,58 @@
-# React + Vite
+# fe-final-bets
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Instalar dependencias
 
-Currently, two official plugins are available:
+Entre na pasta do projeto e instale as dependências:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+cd fe-final-bets
+npm install
+```
 
-## React Compiler
+## Rodar a aplicação
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```
+npm run dev
+```
 
-Note: This will impact Vite dev & build performances.
+Esse comando sobe as duas partes ao mesmo tempo:
 
-## Expanding the ESLint configuration
+- O site (front-end) em http://localhost:5173
+- A API (json-server) em http://localhost:3001
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Deixe esse comando rodando e abra http://localhost:5173 no navegador.
+
+Os dados (clientes, administradores e eventos) ficam salvos no arquivo `db.json`. Tudo que for cadastrado é gravado lá.
+
+## Modo cliente
+
+O cliente é quem faz apostas.
+
+1. Abra http://localhost:5173/.
+2. Clique em **Cadastrar** e crie uma conta (nome, e-mail, data de nascimento, CPF e senha). Depois clique em **Login** e entre com o e-mail e a senha.
+3. Você cai no painel do cliente. Nele você tem um cabeçalho com o seu **saldo** e três botões:
+   - **Adicionar saldo**: coloca dinheiro na conta (precisa de saldo para apostar).
+   - **Eventos abertos**: mostra os jogos em que dá para apostar agora.
+   - **Minhas Apostas**: mostra as apostas que você já fez.
+4. Para apostar, vá em **Eventos abertos**, escolha em qual time você acha que vai ganhar. A **odd aparece** na tela, então você digita o valor que quer apostar e confirma. O valor é descontado do seu saldo.
+5. Em **Minhas Apostas** você acompanha o resultado de cada aposta: "aguardando resultado", "ganhou" (quando você recebe o prêmio) ou "perdeu".
+
+## Modo administrador
+
+O administrador é quem cria e gerencia os eventos (os jogos).
+
+As páginas do administrador são **ocultas**: não existe botão para elas na página inicial, então você precisa **digitar o endereço na barra do navegador**.
+
+1. Rota inicial do administrador: abra http://localhost:5173/admin/cadastro para criar uma conta de administrador.
+2. Depois abra http://localhost:5173/admin/login para entrar.
+3. Após o login você vai para a página do administrador. Clique em **Gerenciar eventos** para abrir o painel de eventos.
+4. No painel você pode:
+   - **Criar um evento**: escolher os dois times, a data e hora da partida e a data e hora de abertura das apostas.
+   - **Editar** ou **Excluir** um evento.
+   - **Fechar para apostas**: trava o evento para que os clientes não possam mais apostar nele.
+   - **Gerar resultado**: sorteia o vencedor do jogo e paga automaticamente os clientes que acertaram. Esse botão só fica habilitado depois que o evento foi fechado para apostas.
+
+## Dica rápida
+
+- O cliente só consegue apostar se tiver saldo (use o botão **Adicionar saldo**).
+- Um evento só aparece em **Eventos abertos** quando a data de abertura das apostas já passou e ele ainda não foi fechado nem teve o resultado gerado. Para testar rápido, ao criar o evento como administrador, coloque a abertura das apostas para um horário que já passou e a partida para um horário um pouco à frente.
