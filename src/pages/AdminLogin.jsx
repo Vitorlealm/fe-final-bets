@@ -67,111 +67,86 @@ function AdminLogin() {
   }
 
   return (
-    <div className="auth-page">
-      {/* Painel lateral admin */}
-      <div className="auth-lateral auth-lateral--admin">
-        <div className="auth-lateral-conteudo">
-          <span className="auth-lateral-icon">🛡️</span>
-          <h2>Área Restrita</h2>
-          <p>Acesso exclusivo para administradores da plataforma BetArena.</p>
-          <ul className="auth-lateral-lista">
-            <li>⚙️ Gerencie eventos</li>
-            <li>🔒 Controle as apostas</li>
-            <li>🎲 Gere resultados</li>
-            <li>📈 Acompanhe o ranking</li>
+    <div className="container py-5">
+      <div className="card mx-auto shadow-sm" style={{ maxWidth: '480px' }}>
+        <div className="card-body">
+          <div className="text-center mb-2">
+            <span className="badge bg-warning text-dark">🛡️ Área Administrativa</span>
+          </div>
+          <h1 className="h4 text-center">{isLogin ? 'Acesso Administrativo' : 'Novo Administrador'}</h1>
+          <p className="text-muted text-center">
+            {isLogin ? 'Entre com suas credenciais de administrador' : 'Preencha os dados para criar uma conta'}
+          </p>
+
+          {/* Abas Login / Cadastro */}
+          <ul className="nav nav-tabs mb-3">
+            <li className="nav-item">
+              <button type="button" className={`nav-link ${isLogin ? 'active' : ''}`} onClick={() => trocarAba(true)}>
+                Login
+              </button>
+            </li>
+            <li className="nav-item">
+              <button type="button" className={`nav-link ${!isLogin ? 'active' : ''}`} onClick={() => trocarAba(false)}>
+                Cadastro
+              </button>
+            </li>
           </ul>
-        </div>
-      </div>
-
-      {/* Formulário */}
-      <div className="auth-formulario-area">
-        <div className="auth-card auth-card--admin">
-          <div className="auth-card-header">
-            <h1 className="auth-titulo">
-              {isLogin ? 'Acesso Administrativo' : 'Novo Administrador'}
-            </h1>
-            <p className="auth-subtitulo">
-              {isLogin ? 'Entre com suas credenciais de administrador' : 'Preencha os dados para criar uma conta'}
-            </p>
-          </div>
-
-          <div className="auth-abas auth-abas--admin">
-            <button
-              className={`auth-aba ${isLogin ? 'auth-aba--ativa auth-aba--ativa-admin' : ''}`}
-              onClick={() => trocarAba(true)}
-              type="button"
-            >
-              Login
-            </button>
-            <button
-              className={`auth-aba ${!isLogin ? 'auth-aba--ativa auth-aba--ativa-admin' : ''}`}
-              onClick={() => trocarAba(false)}
-              type="button"
-            >
-              Cadastro
-            </button>
-          </div>
 
           {erro && (
-            <div className={`auth-mensagem ${erro.startsWith('✅') ? 'auth-mensagem--ok' : 'auth-mensagem--erro'}`}>
-              {erro}
-            </div>
+            <div className={`alert ${erro.startsWith('✅') ? 'alert-success' : 'alert-danger'}`}>{erro}</div>
           )}
 
-          <form onSubmit={isLogin ? loginHandler : cadastrar} className="auth-form">
+          <form onSubmit={isLogin ? loginHandler : cadastrar}>
             {!isLogin && (
               <>
-                <div className="form-group">
-                  <label>Nome completo</label>
-                  <input placeholder="Nome do administrador" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <div className="mb-3">
+                  <label className="form-label">Nome completo</label>
+                  <input className="form-control" placeholder="Nome do administrador" value={nome} onChange={(e) => setNome(e.target.value)} required />
                 </div>
-                <div className="auth-form-linha">
-                  <div className="form-group">
-                    <label>Data de nascimento</label>
-                    <input type="date" value={dataNascimento} onChange={(e) => setDataNascimento(e.target.value)} required />
+                <div className="row">
+                  <div className="col mb-3">
+                    <label className="form-label">Data de nascimento</label>
+                    <input type="date" className="form-control" value={dataNascimento} onChange={(e) => setDataNascimento(e.target.value)} required />
                   </div>
-                  <div className="form-group">
-                    <label>CPF</label>
-                    <input placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} required />
+                  <div className="col mb-3">
+                    <label className="form-label">CPF</label>
+                    <input className="form-control" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} required />
                   </div>
                 </div>
               </>
             )}
 
-            <div className="form-group">
-              <label>E-mail</label>
-              <input type="email" placeholder="admin@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <div className="mb-3">
+              <label className="form-label">E-mail</label>
+              <input type="email" className="form-control" placeholder="admin@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="form-group">
-              <label>Senha</label>
-              <input type="password" placeholder="••••••••" value={senha} onChange={(e) => setSenha(e.target.value)} required />
+            <div className="mb-3">
+              <label className="form-label">Senha</label>
+              <input type="password" className="form-control" placeholder="••••••••" value={senha} onChange={(e) => setSenha(e.target.value)} required />
             </div>
 
             {!isLogin && (
-              <div className="form-group">
-                <label>Confirmar senha</label>
+              <div className="mb-3">
+                <label className="form-label">Confirmar senha</label>
                 <input
                   type="password"
+                  className="form-control"
                   placeholder="••••••••"
                   value={confirmarSenha}
                   onChange={(e) => setConfirmarSenha(e.target.value)}
                   required
                 />
-                {confirmarSenha && senha !== confirmarSenha && (
-                  <span className="campo-erro">As senhas não coincidem</span>
-                )}
-                {confirmarSenha && senha === confirmarSenha && (
-                  <span className="campo-ok">✓ Senhas coincidem</span>
-                )}
+                {confirmarSenha && senha !== confirmarSenha && <span className="text-danger small">As senhas não coincidem</span>}
+                {confirmarSenha && senha === confirmarSenha && <span className="text-success small">✓ Senhas coincidem</span>}
               </div>
             )}
 
-            <button type="submit" className="btn-primary btn-full btn-admin" disabled={carregando}>
+            <button type="submit" className="btn btn-warning w-100" disabled={carregando}>
               {carregando ? '⏳ Aguarde...' : isLogin ? 'Entrar como Admin' : 'Criar conta admin'}
             </button>
           </form>
 
-          <div className="auth-rodape">
+          <div className="text-center mt-3">
             <Link to="/">← Voltar à tela inicial</Link>
           </div>
         </div>

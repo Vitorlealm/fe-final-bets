@@ -99,161 +99,142 @@ function AdminDashboard() {
   const resolvidos    = eventos.filter(ev => ev.resolvido).length
 
   return (
-    <div className="dash-page">
-      {/* ── Sidebar ── */}
-      <aside className="dash-sidebar dash-sidebar--admin">
-        <div className="dash-sidebar-logo">
-          <span>🛡️</span>
-          <strong>BetArena</strong>
-        </div>
-
-        <div className="dash-admin-info">
-          <span className="dash-admin-avatar">👤</span>
-          <div>
-            <strong>{user.nome}</strong>
-            <span>Administrador</span>
+    <>
+      {/* Navbar no topo (amarela = área administrativa) */}
+      <nav className="navbar navbar-expand bg-warning">
+        <div className="container">
+          <span className="navbar-brand">🛡️ BetArena Admin</span>
+          <div className="navbar-nav me-auto">
+            <Link to="/ranking" className="nav-link">🏆 Ranking</Link>
+            <Link to="/regulamento" className="nav-link">📖 Regulamento</Link>
           </div>
+          <button className="btn btn-outline-dark btn-sm" onClick={sair}>← Sair</button>
+        </div>
+      </nav>
+
+      <div className="container my-4">
+        {/* Cabeçalho */}
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+          <h1 className="h4 mb-0">Olá, {user.nome}</h1>
+          <span className="badge bg-warning text-dark fs-6">🛡️ Administrador</span>
         </div>
 
-        <nav className="dash-nav">
-          <button
-            className={`dash-nav-item ${view === 'eventos' ? 'dash-nav-item--ativo' : ''}`}
-            onClick={() => setView('eventos')}
-          >
-            📋 Meus eventos
-            {eventos.length > 0 && <span className="dash-badge">{eventos.length}</span>}
-          </button>
-          <button
-            className={`dash-nav-item ${view === 'novo' ? 'dash-nav-item--ativo' : ''}`}
-            onClick={() => { limparFormulario(); setView('novo') }}
-          >
-            ➕ Novo evento
-          </button>
-          <Link to="/ranking"     className="dash-nav-item">🏆 Ranking</Link>
-          <Link to="/regulamento" className="dash-nav-item">📖 Regulamento</Link>
-        </nav>
-
-        <button className="dash-sair" onClick={sair}>← Sair</button>
-      </aside>
-
-      {/* ── Conteúdo ── */}
-      <main className="dash-main">
         {/* Cards de resumo */}
-        <div className="dash-resumo">
-          <div className="dash-resumo-card">
-            <span className="dash-resumo-icon">📋</span>
-            <div>
-              <span className="dash-resumo-num">{eventos.length}</span>
-              <span className="dash-resumo-label">Total de eventos</span>
-            </div>
-          </div>
-          <div className="dash-resumo-card dash-resumo-card--aberto">
-            <span className="dash-resumo-icon">🟢</span>
-            <div>
-              <span className="dash-resumo-num">{abertos}</span>
-              <span className="dash-resumo-label">Eventos abertos</span>
-            </div>
-          </div>
-          <div className="dash-resumo-card">
-            <span className="dash-resumo-icon">✅</span>
-            <div>
-              <span className="dash-resumo-num">{resolvidos}</span>
-              <span className="dash-resumo-label">Resolvidos</span>
-            </div>
-          </div>
-          <div className="dash-resumo-card">
-            <span className="dash-resumo-icon">🎰</span>
-            <div>
-              <span className="dash-resumo-num">{totalApostas}</span>
-              <span className="dash-resumo-label">Apostas recebidas</span>
-            </div>
-          </div>
+        <div className="row row-cols-2 row-cols-md-4 g-3 mb-4">
+          <div className="col"><div className="card text-center h-100"><div className="card-body">
+            <div className="fs-3">📋</div><div className="fs-4 fw-bold">{eventos.length}</div><div className="text-muted small">Total de eventos</div>
+          </div></div></div>
+          <div className="col"><div className="card text-center h-100 border-success"><div className="card-body">
+            <div className="fs-3">🟢</div><div className="fs-4 fw-bold">{abertos}</div><div className="text-muted small">Eventos abertos</div>
+          </div></div></div>
+          <div className="col"><div className="card text-center h-100"><div className="card-body">
+            <div className="fs-3">✅</div><div className="fs-4 fw-bold">{resolvidos}</div><div className="text-muted small">Resolvidos</div>
+          </div></div></div>
+          <div className="col"><div className="card text-center h-100"><div className="card-body">
+            <div className="fs-3">🎰</div><div className="fs-4 fw-bold">{totalApostas}</div><div className="text-muted small">Apostas recebidas</div>
+          </div></div></div>
         </div>
 
-        {/* ── Formulário novo/editar evento ── */}
+        {/* Abas: lista x novo */}
+        <ul className="nav nav-pills mb-3">
+          <li className="nav-item">
+            <button className={`nav-link ${view === 'eventos' ? 'active' : ''}`} onClick={() => setView('eventos')}>
+              📋 Meus eventos {eventos.length > 0 && <span className="badge bg-light text-dark">{eventos.length}</span>}
+            </button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${view === 'novo' ? 'active' : ''}`} onClick={() => { limparFormulario(); setView('novo') }}>
+              ➕ Novo evento
+            </button>
+          </li>
+        </ul>
+
+        {/* Formulário novo/editar evento */}
         {view === 'novo' && (
-          <div className="dash-form-panel">
-            <div className="dash-secao-header">
-              <h2>{editandoId === null ? '➕ Novo Evento' : '✏️ Editar Evento'}</h2>
-            </div>
+          <div className="card mb-4">
+            <div className="card-body">
+              <h2 className="h5 mb-3">{editandoId === null ? '➕ Novo Evento' : '✏️ Editar Evento'}</h2>
+              <form onSubmit={salvar}>
+                <div className="row">
+                  <div className="col-md-5 mb-3">
+                    <label className="form-label">Time da casa</label>
+                    <select className="form-select" value={clubeCasaId} onChange={e => setClubeCasaId(e.target.value)} required>
+                      <option value="">Selecione...</option>
+                      {clubes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                    </select>
+                  </div>
+                  <div className="col-md-2 d-flex align-items-end justify-content-center mb-3">
+                    <span className="fw-bold">VS</span>
+                  </div>
+                  <div className="col-md-5 mb-3">
+                    <label className="form-label">Time visitante</label>
+                    <select className="form-select" value={clubeForaId} onChange={e => setClubeForaId(e.target.value)} required>
+                      <option value="">Selecione...</option>
+                      {clubes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                    </select>
+                  </div>
+                </div>
 
-            <form onSubmit={salvar} className="dash-form">
-              <div className="dash-form-linha">
-                <div className="form-group">
-                  <label>Time da casa</label>
-                  <select value={clubeCasaId} onChange={e => setClubeCasaId(e.target.value)} required>
-                    <option value="">Selecione...</option>
-                    {clubes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-                  </select>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">📅 Data e hora da partida</label>
+                    <input type="datetime-local" className="form-control" value={dataHoraPartida} onChange={e => setDataHoraPartida(e.target.value)} required />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">🔓 Abertura das apostas</label>
+                    <input type="datetime-local" className="form-control" value={inicioApostas} onChange={e => setInicioApostas(e.target.value)} required />
+                  </div>
                 </div>
-                <div className="dash-vs">VS</div>
-                <div className="form-group">
-                  <label>Time visitante</label>
-                  <select value={clubeForaId} onChange={e => setClubeForaId(e.target.value)} required>
-                    <option value="">Selecione...</option>
-                    {clubes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
-                  </select>
-                </div>
-              </div>
 
-              <div className="dash-form-linha">
-                <div className="form-group">
-                  <label>📅 Data e hora da partida</label>
-                  <input type="datetime-local" value={dataHoraPartida} onChange={e => setDataHoraPartida(e.target.value)} required />
-                </div>
-                <div className="form-group">
-                  <label>🔓 Abertura das apostas</label>
-                  <input type="datetime-local" value={inicioApostas} onChange={e => setInicioApostas(e.target.value)} required />
-                </div>
-              </div>
-
-              <div className="dash-form-acoes">
-                <button type="submit" className="btn-primary btn-admin">
-                  {editandoId === null ? '✅ Criar evento' : '💾 Salvar alterações'}
-                </button>
-                {editandoId !== null && (
-                  <button type="button" className="btn-secondary" onClick={() => { limparFormulario(); setView('eventos') }}>
-                    Cancelar
+                <div className="d-flex gap-2">
+                  <button type="submit" className="btn btn-warning">
+                    {editandoId === null ? '✅ Criar evento' : '💾 Salvar alterações'}
                   </button>
-                )}
-              </div>
-            </form>
+                  {editandoId !== null && (
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => { limparFormulario(); setView('eventos') }}>
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
           </div>
         )}
 
-        {/* ── Lista de eventos ── */}
+        {/* Lista de eventos */}
         {view === 'eventos' && (
           <>
-            <div className="dash-secao-header">
-              <h2>📋 Meus Eventos</h2>
-              <button className="btn-primary btn-admin btn-sm" onClick={() => { limparFormulario(); setView('novo') }}>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h2 className="h5 mb-0">📋 Meus Eventos</h2>
+              <button className="btn btn-warning btn-sm" onClick={() => { limparFormulario(); setView('novo') }}>
                 + Novo evento
               </button>
             </div>
 
-            {eventos.length === 0
-              ? <div className="dash-vazio">
-                  <span>📭</span>
-                  <p>Nenhum evento criado ainda.</p>
-                  <button className="btn-primary btn-admin" onClick={() => setView('novo')}>Criar primeiro evento</button>
-                </div>
-              : <ul className="lista-eventos">
-                  {eventos.map(ev => (
-                    <EventoCardAdmin
-                      key={ev.id}
-                      evento={ev}
-                      onEditar={handleEditar}
-                      onExcluir={handleExcluir}
-                      onFechar={handleFechar}
-                      onGerarResultado={handleGerarResultado}
-                    />
-                  ))}
-                </ul>
-            }
+            {eventos.length === 0 ? (
+              <div className="text-center text-muted border rounded p-4">
+                <div className="fs-1">📭</div>
+                <p>Nenhum evento criado ainda.</p>
+                <button className="btn btn-warning" onClick={() => setView('novo')}>Criar primeiro evento</button>
+              </div>
+            ) : (
+              <div>
+                {eventos.map(ev => (
+                  <EventoCardAdmin
+                    key={ev.id}
+                    evento={ev}
+                    onEditar={handleEditar}
+                    onExcluir={handleExcluir}
+                    onFechar={handleFechar}
+                    onGerarResultado={handleGerarResultado}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
-      </main>
-    </div>
+      </div>
+    </>
   )
 }
 

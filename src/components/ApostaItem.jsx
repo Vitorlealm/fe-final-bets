@@ -1,9 +1,4 @@
-import clubes from '../data/clubes.json'
-
-function nomeClube(id) {
-  const clube = clubes.find(c => c.id === Number(id))
-  return clube ? clube.nome : '?'
-}
+import { nomeClube } from '../utils/helpers'
 
 function ApostaItem({ aposta }) {
   const { vencedorId, odd, valor, evento } = aposta
@@ -12,37 +7,39 @@ function ApostaItem({ aposta }) {
   const premio = Number(valor || 0) * odd
 
   return (
-    <li className={`evento-card aposta-item ${ganhou ? 'aposta-item--ganhou' : perdeu ? 'aposta-item--perdeu' : ''}`}>
-      <div className="evento-card-top">
-        {!evento.resolvido && <span className="evento-badge evento-badge--aguardando">⏳ Aguardando</span>}
-        {ganhou  && <span className="evento-badge evento-badge--ganhou">🏆 Ganhou!</span>}
-        {perdeu  && <span className="evento-badge evento-badge--perdeu">❌ Perdeu</span>}
-        <span className="evento-odd-badge">Odd {odd}</span>
-      </div>
-
-      <div className="evento-times">
-        <span className="evento-time">{nomeClube(evento.clubeCasaId)}</span>
-        <span className="evento-vs">VS</span>
-        <span className="evento-time">{nomeClube(evento.clubeForaId)}</span>
-      </div>
-
-      <div className="aposta-item-detalhes">
-        <div>
-          <span className="aposta-form-label">Palpite</span>
-          <strong>{nomeClube(vencedorId)}</strong>
+    <div className="card mb-3 shadow-sm">
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          {!evento.resolvido && <span className="badge bg-secondary">⏳ Aguardando</span>}
+          {ganhou && <span className="badge bg-success">🏆 Ganhou!</span>}
+          {perdeu && <span className="badge bg-danger">❌ Perdeu</span>}
+          <span className="text-muted small">Odd {odd}</span>
         </div>
-        <div>
-          <span className="aposta-form-label">Valor apostado</span>
-          <strong>R$ {Number(valor || 0).toFixed(2)}</strong>
+
+        <div className="d-flex align-items-center justify-content-center gap-3 my-3">
+          <span className="fw-bold fs-5">{nomeClube(evento.clubeCasaId)}</span>
+          <span className="badge bg-light text-dark">VS</span>
+          <span className="fw-bold fs-5">{nomeClube(evento.clubeForaId)}</span>
         </div>
-        {ganhou && (
+
+        <div className="d-flex flex-wrap gap-4">
           <div>
-            <span className="aposta-form-label">Prêmio recebido</span>
-            <strong className="aposta-ganhou">+R$ {premio.toFixed(2)}</strong>
+            <div className="text-muted small text-uppercase">Palpite</div>
+            <strong>{nomeClube(vencedorId)}</strong>
           </div>
-        )}
+          <div>
+            <div className="text-muted small text-uppercase">Valor apostado</div>
+            <strong>R$ {Number(valor || 0).toFixed(2)}</strong>
+          </div>
+          {ganhou && (
+            <div>
+              <div className="text-muted small text-uppercase">Prêmio recebido</div>
+              <strong className="text-success">+R$ {premio.toFixed(2)}</strong>
+            </div>
+          )}
+        </div>
       </div>
-    </li>
+    </div>
   )
 }
 

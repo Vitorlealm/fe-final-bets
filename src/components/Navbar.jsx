@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 /**
- * Barra de navegação reutilizável.
+ * Barra de navegação reutilizável (Bootstrap).
  * Recebe um array de `links` e `acoes` para renderizar os botões corretos por perfil.
  *
  * links: [{ to: '/rota', label: 'Texto' }]
@@ -19,27 +19,29 @@ function Navbar({ titulo, subtitulo, links = [], acoes = [], onSair }) {
   }
 
   return (
-    <header className="navbar">
-      <div className="navbar-info">
-        <h1>{titulo}</h1>
-        {subtitulo && <p className="navbar-subtitulo">{subtitulo}</p>}
-      </div>
-      <nav className="navbar-nav">
-        {acoes.map((acao, i) => (
-          <button key={i} onClick={acao.onClick}>
-            {acao.label}
+    <nav className="navbar navbar-expand bg-dark navbar-dark">
+      <div className="container">
+        <div className="navbar-brand">
+          {titulo}
+          {subtitulo && <div className="small fw-normal">{subtitulo}</div>}
+        </div>
+        <div className="navbar-nav ms-auto align-items-center gap-2">
+          {acoes.map((acao, i) => (
+            <button key={i} className="btn btn-sm btn-outline-light" onClick={acao.onClick}>
+              {acao.label}
+            </button>
+          ))}
+          {links.map((link) => (
+            <Link key={link.to} to={link.to} className="nav-link">
+              {link.label}
+            </Link>
+          ))}
+          <button className="btn btn-sm btn-outline-light" onClick={sair}>
+            Sair
           </button>
-        ))}
-        {links.map((link) => (
-          <Link key={link.to} to={link.to}>
-            {link.label}
-          </Link>
-        ))}
-        <button className="btn-sair" onClick={sair}>
-          Sair
-        </button>
-      </nav>
-    </header>
+        </div>
+      </div>
+    </nav>
   )
 }
 

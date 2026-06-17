@@ -4,68 +4,61 @@ function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="home-page">
-      <div className="home-hero">
-        <div className="home-logo">🏆</div>
-        <h1 className="home-titulo">BetArena</h1>
-        <p className="home-subtitulo">
-          Plataforma acadêmica de apostas esportivas fictícias
-        </p>
+    <div className="container py-5 text-center">
+      <div className="mb-5">
+        <div className="display-3">🏆</div>
+        <h1 className="fw-bold">BetArena</h1>
+        <p className="text-muted">Plataforma acadêmica de apostas esportivas fictícias</p>
       </div>
 
-      <div className="home-cards">
+      <div className="row justify-content-center g-4">
         {/* Card Jogador */}
-        <div className="home-card home-card--jogador">
-          <div className="home-card-icon">⚽</div>
-          <h2>Sou Jogador</h2>
-          <p>Acesse sua conta, faça apostas fictícias e acompanhe seu desempenho no ranking.</p>
-          <div className="home-card-botoes">
-            <button
-              className="btn-primary"
-              onClick={() => navigate('/auth', { state: { modo: 'login' } })}
-            >
-              Entrar
-            </button>
-            <button
-              className="btn-secondary"
-              onClick={() => navigate('/auth', { state: { modo: 'cadastro' } })}
-            >
-              Criar conta
-            </button>
+        <div className="col-12 col-md-5">
+          <div className="card h-100 shadow-sm">
+            <div className="card-body d-flex flex-column">
+              <div className="fs-1">⚽</div>
+              <h2 className="h4">Sou Jogador</h2>
+              <p className="text-muted flex-grow-1">
+                Acesse sua conta, faça apostas fictícias e acompanhe seu desempenho no ranking.
+              </p>
+              <div className="d-grid gap-2">
+                <button className="btn btn-primary" onClick={() => navigate('/auth', { state: { modo: 'login' } })}>
+                  Entrar
+                </button>
+                <button className="btn btn-outline-secondary" onClick={() => navigate('/auth', { state: { modo: 'cadastro' } })}>
+                  Criar conta
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Divisor */}
-        <div className="home-divisor">ou</div>
 
         {/* Card Administrador */}
-        <div className="home-card home-card--admin">
-          <div className="home-card-icon">🛡️</div>
-          <h2>Sou Administrador</h2>
-          <p>Gerencie eventos, controle apostas e acompanhe os resultados da plataforma.</p>
-          <div className="home-card-botoes">
-            <button
-              className="btn-primary"
-              onClick={() => navigate('/admin/login')}
-            >
-              Entrar
-            </button>
-            <button
-              className="btn-secondary"
-              onClick={() => navigate('/admin/cadastro')}
-            >
-              Criar conta
-            </button>
+        <div className="col-12 col-md-5">
+          <div className="card h-100 shadow-sm">
+            <div className="card-body d-flex flex-column">
+              <div className="fs-1">🛡️</div>
+              <h2 className="h4">Sou Administrador</h2>
+              <p className="text-muted flex-grow-1">
+                Gerencie eventos, controle apostas e acompanhe os resultados da plataforma.
+              </p>
+              <div className="d-grid gap-2">
+                <button className="btn btn-primary" onClick={() => navigate('/admin/login')}>
+                  Entrar
+                </button>
+                <button className="btn btn-outline-secondary" onClick={() => navigate('/admin/cadastro')}>
+                  Criar conta
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <p className="home-aviso">
+      <p className="text-muted small mt-4">
         ⚠️ Plataforma de uso exclusivamente acadêmico. Todos os valores são fictícios.
       </p>
-      <Link to="/regulamento" className="home-regulamento-link">
-        📋 Ler o regulamento
-      </Link>
+      <Link to="/regulamento">📋 Ler o regulamento</Link>
     </div>
   )
 }

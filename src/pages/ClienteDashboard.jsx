@@ -53,8 +53,11 @@ function ClienteDashboard() {
     } catch { alert(ERRO) }
   }
 
+  // Gera uma odd aleatória entre 1.5 e 5.0 (com 2 casas decimais).
   function calcularOdd() {
-    return Number((Math.random() * (5 - 1.5) + 1.5).toFixed(2))
+    const min = 1.5
+    const max = 5
+    return Number((Math.random() * (max - min) + min).toFixed(2))
   }
 
   function handleEscolherVencedor(ev, vencedorId) {
@@ -94,145 +97,160 @@ function ClienteDashboard() {
   const perdidas = minhasApostas.filter(a => a.evento.resolvido && a.vencedorId !== a.evento.resultado).length
 
   return (
-    <div className="dash-page">
-      {/* ── Sidebar ── */}
-      <aside className="dash-sidebar dash-sidebar--cliente">
-        <div className="dash-sidebar-logo">
-          <span>⚽</span>
-          <strong>BetArena</strong>
+    <>
+      {/* Navbar no topo */}
+      <nav className="navbar navbar-expand bg-dark navbar-dark">
+        <div className="container">
+          <span className="navbar-brand">⚽ BetArena</span>
+          <div className="navbar-nav me-auto">
+            <Link to="/ranking" className="nav-link">🏆 Ranking</Link>
+            <Link to="/profile" className="nav-link">👤 Meus dados</Link>
+            <Link to="/regulamento" className="nav-link">📖 Regulamento</Link>
+          </div>
+          <button className="btn btn-outline-light btn-sm" onClick={sair}>← Sair</button>
+        </div>
+      </nav>
+
+      <div className="container my-4">
+        {/* Saudação + saldo */}
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+          <h1 className="h4 mb-0">Olá, {user.nome} 👋</h1>
+          <div className="card">
+            <div className="card-body py-2 d-flex align-items-center gap-3">
+              <div>
+                <div className="text-muted small">Saldo fictício</div>
+                <strong className="fs-5">R$ {saldo.toFixed(2)}</strong>
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={() => setModalSaldo(true)}>+ Adicionar saldo</button>
+            </div>
+          </div>
         </div>
 
-        <div className="dash-saldo-card">
-          <span className="dash-saldo-label">Saldo fictício</span>
-          <span className="dash-saldo-valor">R$ {saldo.toFixed(2)}</span>
-          <button className="btn-primary btn-full" onClick={() => setModalSaldo(true)}>
-            + Adicionar saldo
-          </button>
-        </div>
-
-        <nav className="dash-nav">
-          <button
-            className={`dash-nav-item ${view === 'eventos' ? 'dash-nav-item--ativo' : ''}`}
-            onClick={() => setView('eventos')}
-          >
-            🎯 Eventos abertos
-            {abertos.length > 0 && <span className="dash-badge">{abertos.length}</span>}
-          </button>
-          <button
-            className={`dash-nav-item ${view === 'apostas' ? 'dash-nav-item--ativo' : ''}`}
-            onClick={() => setView('apostas')}
-          >
-            📋 Minhas apostas
-            {minhasApostas.length > 0 && <span className="dash-badge">{minhasApostas.length}</span>}
-          </button>
-          <Link to="/ranking"    className="dash-nav-item">🏆 Ranking</Link>
-          <Link to="/profile"    className="dash-nav-item">👤 Meus dados</Link>
-          <Link to="/regulamento" className="dash-nav-item">📖 Regulamento</Link>
-        </nav>
-
-        <button className="dash-sair" onClick={sair}>← Sair</button>
-      </aside>
-
-      {/* ── Conteúdo principal ── */}
-      <main className="dash-main">
         {/* Cards de resumo */}
-        <div className="dash-resumo">
-          <div className="dash-resumo-card">
-            <span className="dash-resumo-icon">🎯</span>
-            <div>
-              <span className="dash-resumo-num">{abertos.length}</span>
-              <span className="dash-resumo-label">Eventos abertos</span>
-            </div>
+        <div className="row row-cols-2 row-cols-md-4 g-3 mb-4">
+          <div className="col">
+            <div className="card text-center h-100"><div className="card-body">
+              <div className="fs-3">🎯</div>
+              <div className="fs-4 fw-bold">{abertos.length}</div>
+              <div className="text-muted small">Eventos abertos</div>
+            </div></div>
           </div>
-          <div className="dash-resumo-card">
-            <span className="dash-resumo-icon">📋</span>
-            <div>
-              <span className="dash-resumo-num">{minhasApostas.length}</span>
-              <span className="dash-resumo-label">Total de apostas</span>
-            </div>
+          <div className="col">
+            <div className="card text-center h-100"><div className="card-body">
+              <div className="fs-3">📋</div>
+              <div className="fs-4 fw-bold">{minhasApostas.length}</div>
+              <div className="text-muted small">Total de apostas</div>
+            </div></div>
           </div>
-          <div className="dash-resumo-card dash-resumo-card--ganhou">
-            <span className="dash-resumo-icon">🏆</span>
-            <div>
-              <span className="dash-resumo-num">{ganhas}</span>
-              <span className="dash-resumo-label">Apostas ganhas</span>
-            </div>
+          <div className="col">
+            <div className="card text-center h-100 border-success"><div className="card-body">
+              <div className="fs-3">🏆</div>
+              <div className="fs-4 fw-bold">{ganhas}</div>
+              <div className="text-muted small">Apostas ganhas</div>
+            </div></div>
           </div>
-          <div className="dash-resumo-card dash-resumo-card--perdeu">
-            <span className="dash-resumo-icon">❌</span>
-            <div>
-              <span className="dash-resumo-num">{perdidas}</span>
-              <span className="dash-resumo-label">Apostas perdidas</span>
-            </div>
+          <div className="col">
+            <div className="card text-center h-100 border-danger"><div className="card-body">
+              <div className="fs-3">❌</div>
+              <div className="fs-4 fw-bold">{perdidas}</div>
+              <div className="text-muted small">Apostas perdidas</div>
+            </div></div>
           </div>
         </div>
 
-        {/* Título da seção */}
-        <div className="dash-secao-header">
-          <h2>{view === 'eventos' ? '🎯 Eventos abertos' : '📋 Minhas apostas'}</h2>
-          <span className="dash-secao-sub">
-            Olá, <strong>{user.nome}</strong>
-          </span>
-        </div>
+        {/* Abas de visualização */}
+        <ul className="nav nav-pills mb-3">
+          <li className="nav-item">
+            <button className={`nav-link ${view === 'eventos' ? 'active' : ''}`} onClick={() => setView('eventos')}>
+              🎯 Eventos abertos {abertos.length > 0 && <span className="badge bg-light text-dark">{abertos.length}</span>}
+            </button>
+          </li>
+          <li className="nav-item">
+            <button className={`nav-link ${view === 'apostas' ? 'active' : ''}`} onClick={() => setView('apostas')}>
+              📋 Minhas apostas {minhasApostas.length > 0 && <span className="badge bg-light text-dark">{minhasApostas.length}</span>}
+            </button>
+          </li>
+        </ul>
 
         {/* Eventos */}
         {view === 'eventos' && (
-          abertos.length === 0
-            ? <div className="dash-vazio"><span>📭</span><p>Nenhum evento aberto no momento.</p><p>Aguarde o administrador criar novos eventos.</p></div>
-            : <ul className="lista-eventos">
-                {abertos.map(ev => (
-                  <EventoCardCliente
-                    key={ev.id}
-                    evento={ev}
-                    apostaAtual={apostaAtual}
-                    onEscolherVencedor={handleEscolherVencedor}
-                    onConfirmarAposta={handleConfirmarAposta}
-                    onCancelarAposta={() => setApostaAtual(null)}
-                    onMudarValor={val => setApostaAtual({ ...apostaAtual, valor: val })}
-                  />
-                ))}
-              </ul>
+          abertos.length === 0 ? (
+            <div className="text-center text-muted border rounded p-4">
+              <div className="fs-1">📭</div>
+              <p className="mb-0">Nenhum evento aberto no momento.</p>
+              <p className="mb-0">Aguarde o administrador criar novos eventos.</p>
+            </div>
+          ) : (
+            <div>
+              {abertos.map(ev => (
+                <EventoCardCliente
+                  key={ev.id}
+                  evento={ev}
+                  apostaAtual={apostaAtual}
+                  onEscolherVencedor={handleEscolherVencedor}
+                  onConfirmarAposta={handleConfirmarAposta}
+                  onCancelarAposta={() => setApostaAtual(null)}
+                  onMudarValor={val => setApostaAtual({ ...apostaAtual, valor: val })}
+                />
+              ))}
+            </div>
+          )
         )}
 
         {/* Apostas */}
         {view === 'apostas' && (
-          minhasApostas.length === 0
-            ? <div className="dash-vazio"><span>🎰</span><p>Você ainda não fez nenhuma aposta.</p><button className="btn-primary" onClick={() => setView('eventos')}>Ver eventos abertos</button></div>
-            : <ul className="lista-eventos">
-                {minhasApostas.map(ap => <ApostaItem key={ap.id} aposta={ap} />)}
-              </ul>
+          minhasApostas.length === 0 ? (
+            <div className="text-center text-muted border rounded p-4">
+              <div className="fs-1">🎰</div>
+              <p>Você ainda não fez nenhuma aposta.</p>
+              <button className="btn btn-primary" onClick={() => setView('eventos')}>Ver eventos abertos</button>
+            </div>
+          ) : (
+            <div>
+              {minhasApostas.map(ap => <ApostaItem key={ap.id} aposta={ap} />)}
+            </div>
+          )
         )}
-      </main>
+      </div>
 
-      {/* ── Modal adicionar saldo ── */}
+      {/* Modal adicionar saldo */}
       {modalSaldo && (
-        <div className="modal-overlay" onClick={() => setModalSaldo(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>💰 Adicionar saldo fictício</h2>
-            <p>Informe o valor que deseja adicionar à sua conta.</p>
-            <form onSubmit={confirmarSaldo} className="modal-form">
-              <div className="form-group">
-                <label>Valor (R$)</label>
-                <input
-                  type="number"
-                  placeholder="Ex: 100"
-                  min="1"
-                  step="1"
-                  value={valorSaldo}
-                  onChange={e => setValorSaldo(e.target.value)}
-                  autoFocus
-                  required
-                />
+        <>
+          <div className="modal d-block" tabIndex="-1" onClick={() => setModalSaldo(false)}>
+            <div className="modal-dialog modal-dialog-centered" onClick={e => e.stopPropagation()}>
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h2 className="modal-title h5">💰 Adicionar saldo fictício</h2>
+                  <button type="button" className="btn-close" onClick={() => setModalSaldo(false)} />
+                </div>
+                <form onSubmit={confirmarSaldo}>
+                  <div className="modal-body">
+                    <p className="text-muted">Informe o valor que deseja adicionar à sua conta.</p>
+                    <label className="form-label">Valor (R$)</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Ex: 100"
+                      min="1"
+                      step="1"
+                      value={valorSaldo}
+                      onChange={e => setValorSaldo(e.target.value)}
+                      autoFocus
+                      required
+                    />
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => setModalSaldo(false)}>Cancelar</button>
+                    <button type="submit" className="btn btn-primary">Confirmar</button>
+                  </div>
+                </form>
               </div>
-              <div className="modal-acoes">
-                <button type="submit" className="btn-primary">Confirmar</button>
-                <button type="button" className="btn-secondary" onClick={() => setModalSaldo(false)}>Cancelar</button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
+          <div className="modal-backdrop show" />
+        </>
       )}
-    </div>
+    </>
   )
 }
 

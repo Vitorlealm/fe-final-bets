@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "bootstrap": "^5.3.8",
     "concurrently": "^10.0.3",
     "json-server": "^0.17.4",
     "react": "^19.2.6",

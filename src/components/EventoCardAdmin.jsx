@@ -1,76 +1,71 @@
-import clubes from '../data/clubes.json'
-
-function nomeClube(id) {
-  const clube = clubes.find(c => c.id === Number(id))
-  return clube ? clube.nome : '?'
-}
-
-function formatarData(valor) {
-  return new Date(valor).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
-}
+import { nomeClube, formatarData } from '../utils/helpers'
 
 function EventoCardAdmin({ evento, onEditar, onExcluir, onFechar, onGerarResultado }) {
   const { clubeCasaId, clubeForaId, dataHoraPartida, inicioApostas, apostas, fechado, resolvido, resultado } = evento
+  const qtdApostas = (apostas || []).length
 
   return (
-    <li className={`evento-card ${resolvido ? 'evento-card--resolvido' : fechado ? 'evento-card--fechado' : 'evento-card--aberto'}`}>
-      {/* Badge de status */}
-      <div className="evento-card-top">
-        {resolvido
-          ? <span className="evento-badge evento-badge--resolvido">✅ Resolvido</span>
-          : fechado
-            ? <span className="evento-badge evento-badge--fechado">🔒 Fechado</span>
-            : <span className="evento-badge evento-badge--aberto">🟢 Aberto</span>
-        }
-        <span className="evento-apostas-count">🎰 {(apostas || []).length} aposta{(apostas || []).length !== 1 ? 's' : ''}</span>
-      </div>
-
-      {/* Times */}
-      <div className="evento-times">
-        <span className="evento-time">{nomeClube(clubeCasaId)}</span>
-        <span className="evento-vs">VS</span>
-        <span className="evento-time">{nomeClube(clubeForaId)}</span>
-      </div>
-
-      {/* Datas */}
-      <div className="evento-datas">
-        <span>⚽ Partida: {formatarData(dataHoraPartida)}</span>
-        <span>🔓 Apostas: {formatarData(inicioApostas)}</span>
-      </div>
-
-      {/* Resultado */}
-      {resolvido && (
-        <div className="evento-resultado-box">
-          🏆 Vencedor: <strong>{nomeClube(resultado)}</strong>
+    <div className="card mb-3 shadow-sm">
+      <div className="card-body">
+        {/* Badge de status */}
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          {resolvido ? (
+            <span className="badge bg-secondary">✅ Resolvido</span>
+          ) : fechado ? (
+            <span className="badge bg-warning text-dark">🔒 Fechado</span>
+          ) : (
+            <span className="badge bg-success">🟢 Aberto</span>
+          )}
+          <span className="text-muted small">🎰 {qtdApostas} aposta{qtdApostas !== 1 ? 's' : ''}</span>
         </div>
-      )}
 
-      {/* Ações principais */}
-      {!resolvido && (
-        <div className="evento-acoes">
-          <button
-            className={fechado ? 'btn-secondary' : 'btn-primary btn-admin'}
-            onClick={() => onFechar(evento)}
-            disabled={fechado}
-          >
-            🔒 {fechado ? 'Apostas fechadas' : 'Fechar apostas'}
-          </button>
-          <button
-            className="btn-primary"
-            onClick={() => onGerarResultado(evento)}
-            disabled={!fechado}
-          >
-            🎲 Gerar resultado
-          </button>
+        {/* Times */}
+        <div className="d-flex align-items-center justify-content-center gap-3 my-3">
+          <span className="fw-bold fs-5">{nomeClube(clubeCasaId)}</span>
+          <span className="badge bg-light text-dark">VS</span>
+          <span className="fw-bold fs-5">{nomeClube(clubeForaId)}</span>
         </div>
-      )}
 
-      {/* Ações secundárias */}
-      <div className="evento-acoes-secundarias">
-        <button onClick={() => onEditar(evento)}>✏️ Editar</button>
-        <button className="btn-danger" onClick={() => onExcluir(evento.id)}>🗑️ Excluir</button>
+        {/* Datas */}
+        <div className="d-flex flex-wrap gap-3 text-muted small mb-2">
+          <span>⚽ Partida: {formatarData(dataHoraPartida)}</span>
+          <span>🔓 Apostas: {formatarData(inicioApostas)}</span>
+        </div>
+
+        {/* Resultado */}
+        {resolvido && (
+          <div className="alert alert-info py-2 mb-2">
+            🏆 Vencedor: <strong>{nomeClube(resultado)}</strong>
+          </div>
+        )}
+
+        {/* Ações principais */}
+        {!resolvido && (
+          <div className="d-flex gap-2 mb-2">
+            <button
+              className={fechado ? 'btn btn-outline-secondary' : 'btn btn-warning'}
+              onClick={() => onFechar(evento)}
+              disabled={fechado}
+            >
+              🔒 {fechado ? 'Apostas fechadas' : 'Fechar apostas'}
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => onGerarResultado(evento)}
+              disabled={!fechado}
+            >
+              🎲 Gerar resultado
+            </button>
+          </div>
+        )}
+
+        {/* Ações secundárias */}
+        <div className="d-flex gap-2 border-top pt-2">
+          <button className="btn btn-sm btn-outline-secondary" onClick={() => onEditar(evento)}>✏️ Editar</button>
+          <button className="btn btn-sm btn-danger" onClick={() => onExcluir(evento.id)}>🗑️ Excluir</button>
+        </div>
       </div>
-    </li>
+    </div>
   )
 }
 

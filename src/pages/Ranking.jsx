@@ -19,10 +19,6 @@ function Ranking() {
   const [ranking, setRanking] = useState([])
   const [carregando, setCarregando] = useState(true)
 
-  useEffect(() => {
-    carregarRanking()
-  }, [])
-
   async function carregarRanking() {
     try {
       setCarregando(true)
@@ -65,7 +61,11 @@ function Ranking() {
     }
   }
 
-  function getPremiacão(posicao) {
+  useEffect(() => {
+    carregarRanking()
+  }, [])
+
+  function getPremiacao(posicao) {
     return PREMIACOES.find((p) => p.posicao === posicao) || null
   }
 
@@ -75,12 +75,11 @@ function Ranking() {
   }
 
   const podio = ranking.slice(0, 3)
-  const demais = ranking.slice(3)
 
   return (
-    <div className="page">
-      <h1>🏆 Ranking de Jogadores</h1>
-      <p className="ranking-subtitulo">
+    <div className="container my-4">
+      <h1 className="h3">🏆 Ranking de Jogadores</h1>
+      <p className="text-muted">
         Classificação baseada no total de prêmios acumulados em apostas resolvidas.
       </p>
 
@@ -92,33 +91,29 @@ function Ranking() {
         <>
           {/* Pódio */}
           {podio.length > 0 && (
-            <section className="podio">
-              <h2>Pódio</h2>
-              <div className="podio-cards">
+            <section className="mb-4">
+              <h2 className="h5">Pódio</h2>
+              <div className="row g-3">
                 {podio.map((jogador, i) => {
-                  const premiacao = getPremiacão(i + 1)
+                  const premiacao = getPremiacao(i + 1)
                   const isUsuarioAtual = user && jogador.id === user.id
                   return (
-                    <div
-                      key={jogador.id}
-                      className={`podio-card podio-${i + 1}${isUsuarioAtual ? ' podio-card--voce' : ''}`}
-                    >
-                      <span className="podio-medalha">{premiacao.medalha}</span>
-                      <strong className="podio-nome">
-                        {jogador.nome}
-                        {isUsuarioAtual && ' (você)'}
-                      </strong>
-                      <p className="podio-titulo">{premiacao.titulo}</p>
-                      <p className="podio-ganhos">
-                        R$ {jogador.ganhos.toFixed(2)} em prêmios
-                      </p>
-                      <p className="podio-bonus">
-                        🎁 Bônus fictício: R$ {premiacao.bonus.toFixed(2)}
-                      </p>
-                      <p className="podio-stats">
-                        {jogador.acertos}/{jogador.apostas} acertos (
-                        {getTaxaAcerto(jogador.apostas, jogador.acertos)})
-                      </p>
+                    <div className="col-12 col-md-4" key={jogador.id}>
+                      <div className={`card text-center h-100 ${isUsuarioAtual ? 'border-primary border-2' : ''}`}>
+                        <div className="card-body">
+                          <div className="fs-1">{premiacao.medalha}</div>
+                          <h3 className="h6 mb-1">
+                            {jogador.nome}
+                            {isUsuarioAtual && ' (você)'}
+                          </h3>
+                          <p className="text-muted mb-1">{premiacao.titulo}</p>
+                          <p className="fw-bold mb-1">R$ {jogador.ganhos.toFixed(2)} em prêmios</p>
+                          <p className="text-success small mb-1">🎁 Bônus fictício: R$ {premiacao.bonus.toFixed(2)}</p>
+                          <p className="text-muted small mb-0">
+                            {jogador.acertos}/{jogador.apostas} acertos ({getTaxaAcerto(jogador.apostas, jogador.acertos)})
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )
                 })}
@@ -127,60 +122,52 @@ function Ranking() {
           )}
 
           {/* Tabela completa */}
-          <section className="ranking-tabela-section">
-            <h2>Classificação Geral</h2>
-            <table className="ranking-tabela">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Jogador</th>
-                  <th>Total ganho</th>
-                  <th>Apostas</th>
-                  <th>Acertos</th>
-                  <th>Taxa</th>
-                  <th>Saldo atual</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ranking.map((jogador, i) => {
-                  const premiacao = getPremiacão(i + 1)
-                  const isUsuarioAtual = user && jogador.id === user.id
-                  return (
-                    <tr
-                      key={jogador.id}
-                      className={isUsuarioAtual ? 'ranking-linha--voce' : ''}
-                    >
-                      <td>
-                        {premiacao ? premiacao.medalha : `${i + 1}º`}
-                      </td>
-                      <td>
-                        {jogador.nome}
-                        {isUsuarioAtual && ' ⭐'}
-                      </td>
-                      <td>R$ {jogador.ganhos.toFixed(2)}</td>
-                      <td>{jogador.apostas}</td>
-                      <td>{jogador.acertos}</td>
-                      <td>{getTaxaAcerto(jogador.apostas, jogador.acertos)}</td>
-                      <td>R$ {jogador.saldo.toFixed(2)}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+          <section>
+            <h2 className="h5">Classificação Geral</h2>
+            <div className="table-responsive">
+              <table className="table table-striped table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Jogador</th>
+                    <th>Total ganho</th>
+                    <th>Apostas</th>
+                    <th>Acertos</th>
+                    <th>Taxa</th>
+                    <th>Saldo atual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ranking.map((jogador, i) => {
+                    const premiacao = getPremiacao(i + 1)
+                    const isUsuarioAtual = user && jogador.id === user.id
+                    return (
+                      <tr key={jogador.id} className={isUsuarioAtual ? 'table-primary' : ''}>
+                        <td>{premiacao ? premiacao.medalha : `${i + 1}º`}</td>
+                        <td>
+                          {jogador.nome}
+                          {isUsuarioAtual && ' ⭐'}
+                        </td>
+                        <td>R$ {jogador.ganhos.toFixed(2)}</td>
+                        <td>{jogador.apostas}</td>
+                        <td>{jogador.acertos}</td>
+                        <td>{getTaxaAcerto(jogador.apostas, jogador.acertos)}</td>
+                        <td>R$ {jogador.saldo.toFixed(2)}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-muted small">
+              * Os bônus são fictícios e têm finalidade exclusivamente acadêmica.
+            </p>
           </section>
-
-          <p className="ranking-aviso">
-            * Os bônus são fictícios e têm finalidade exclusivamente acadêmica.
-          </p>
         </>
       )}
 
-      {user?.perfil === 'cliente' && (
-        <Link to="/cliente/dashboard">Voltar ao dashboard</Link>
-      )}
-      {user?.perfil === 'administrador' && (
-        <Link to="/admin/dashboard">Voltar ao dashboard</Link>
-      )}
+      {user?.perfil === 'cliente' && <Link to="/cliente/dashboard">← Voltar ao dashboard</Link>}
+      {user?.perfil === 'administrador' && <Link to="/admin/dashboard">← Voltar ao dashboard</Link>}
     </div>
   )
 }
