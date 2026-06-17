@@ -1,5 +1,26 @@
 {
-  "clients": [],
-  "admins": [],
+  "clients": [
+    {
+      "nome": "Cassiano",
+      "email": "cassiano.lucas2803@gmail.com",
+      "dataNascimento": "2003-03-28",
+      "cpf": "71700247050",
+      "senha": "ah992723Mesa$",
+      "perfil": "cliente",
+      "saldo": 0,
+      "id": 1
+    }
+  ],
+  "admins": [
+    {
+      "nome": "Cassiano Adm",
+      "email": "cassiano.adm@gmail.com",
+      "dataNascimento": "2003-03-28",
+      "cpf": "96025004099",
+      "senha": "ah992723",
+      "perfil": "administrador",
+      "id": 1
+    }
+  ],
   "events": []
 }

@@ -1,8 +1,9 @@
-import { useLocation, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import Navbar from '../components/Navbar'
 
 function ProfileAdmin() {
-  const location = useLocation()
-  const user = location.state?.user
+  const { user } = useAuth()
 
   if (!user) {
     return (
@@ -15,13 +16,37 @@ function ProfileAdmin() {
 
   return (
     <div className="page">
-      <h1>Painel do Administrador</h1>
-      <p>Nome: {user.nome}</p>
-      <p>Email: {user.email}</p>
-      <p>Data de nascimento: {user.dataNascimento}</p>
-      <p>CPF: {user.cpf}</p>
-      <Link to="/admin/dashboard" state={{ user }}>Gerenciar eventos</Link>
-      <Link to="/">Sair</Link>
+      <Navbar
+        titulo="Painel do Administrador"
+        links={[{ to: '/admin/dashboard', label: '← Voltar ao dashboard' }]}
+      />
+
+      <div className="perfil-card">
+        <div className="perfil-campo">
+          <span>Nome</span>
+          <span>{user.nome}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>E-mail</span>
+          <span>{user.email}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>Data de nascimento</span>
+          <span>{user.dataNascimento}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>CPF</span>
+          <span>{user.cpf}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>Perfil</span>
+          <span>🛡️ Administrador</span>
+        </div>
+      </div>
     </div>
   )
 }

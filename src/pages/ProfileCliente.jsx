@@ -1,8 +1,9 @@
-import { useLocation, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import Navbar from '../components/Navbar'
 
 function ProfileCliente() {
-  const location = useLocation()
-  const user = location.state?.user
+  const { user } = useAuth()
 
   if (!user) {
     return (
@@ -15,13 +16,37 @@ function ProfileCliente() {
 
   return (
     <div className="page">
-      <h1>Área do Cliente</h1>
-      <p>Nome: {user.nome}</p>
-      <p>Email: {user.email}</p>
-      <p>Data de nascimento: {user.dataNascimento}</p>
-      <p>CPF: {user.cpf}</p>
-      <Link to="/cliente/dashboard" state={{ user }}>Voltar ao dashboard</Link>
-      <Link to="/">Sair</Link>
+      <Navbar
+        titulo="Meus Dados"
+        links={[{ to: '/cliente/dashboard', label: '← Voltar ao dashboard' }]}
+      />
+
+      <div className="perfil-card">
+        <div className="perfil-campo">
+          <span>Nome</span>
+          <span>{user.nome}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>E-mail</span>
+          <span>{user.email}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>Data de nascimento</span>
+          <span>{user.dataNascimento}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>CPF</span>
+          <span>{user.cpf}</span>
+        </div>
+        <div className="perfil-divisor" />
+        <div className="perfil-campo">
+          <span>Saldo fictício</span>
+          <span>R$ {Number(user.saldo || 0).toFixed(2)}</span>
+        </div>
+      </div>
     </div>
   )
 }

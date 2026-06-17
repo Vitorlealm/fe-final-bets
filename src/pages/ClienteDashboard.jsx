@@ -1,51 +1,49 @@
 import { useEffect, useState } from 'react'
-import { useLocation, Link } from 'react-router-dom'
-import clubes from '../data/clubes.json'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import EventoCardCliente from '../components/EventoCardCliente'
+import ApostaItem from '../components/ApostaItem'
 
-const EVENTS = 'http://localhost:3001/events'
+const EVENTS  = 'http://localhost:3001/events'
 const CLIENTS = 'http://localhost:3001/clients'
-const ERRO_CONEXAO =
-  'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
+const ERRO    = 'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
 function ClienteDashboard() {
-  const location = useLocation()
-  const user = location.state?.user
+  const { user, login, logout } = useAuth()
+  const navigate = useNavigate()
 
-  const [cliente, setCliente] = useState(user)
-  const [eventos, setEventos] = useState([])
-  const [view, setView] = useState('eventos')
+  const [cliente, setCliente]       = useState(user)
+  const [eventos, setEventos]       = useState([])
+  const [view, setView]             = useState('eventos')
   const [apostaAtual, setApostaAtual] = useState(null)
+  const [modalSaldo, setModalSaldo] = useState(false)
+  const [valorSaldo, setValorSaldo] = useState('')
 
   async function carregarCliente() {
     try {
       const dados = await (await fetch(`${CLIENTS}/${user.id}`)).json()
       setCliente(dados)
-    } catch {
-      alert(ERRO_CONEXAO)
-    }
+      login(dados)
+    } catch { alert(ERRO) }
   }
 
   async function carregarEventos() {
     try {
       const dados = await (await fetch(EVENTS)).json()
       setEventos(dados)
-    } catch {
-      alert(ERRO_CONEXAO)
-    }
+    } catch { alert(ERRO) }
   }
 
   useEffect(() => {
-    if (user) {
-      carregarCliente()
-      carregarEventos()
-    }
+    if (user) { carregarCliente(); carregarEventos() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const saldo = cliente?.saldo || 0
 
-  async function adicionarSaldo() {
-    const valor = Number(prompt('Quanto deseja adicionar ao saldo?'))
+  async function confirmarSaldo(e) {
+    e.preventDefault()
+    const valor = Number(valorSaldo)
     if (!valor || valor <= 0) return
     try {
       await fetch(`${CLIENTS}/${user.id}`, {
@@ -53,40 +51,25 @@ function ClienteDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saldo: saldo + valor }),
       })
+      setModalSaldo(false)
+      setValorSaldo('')
       carregarCliente()
-    } catch {
-      alert(ERRO_CONEXAO)
-    }
+    } catch { alert(ERRO) }
   }
 
-  // odd aleatória entre 1.50 e 5.00 com 2 casas decimais
   function calcularOdd() {
     return Number((Math.random() * (5 - 1.5) + 1.5).toFixed(2))
   }
 
-  // 1º passo: escolher o time -> gera e mostra a odd antes de pedir o valor
-  function escolherVencedor(ev, vencedorId) {
+  function handleEscolherVencedor(ev, vencedorId) {
     setApostaAtual({ eventoId: ev.id, vencedorId, odd: calcularOdd(), valor: '' })
   }
 
-  // 2º passo: informar o valor e confirmar
-  async function confirmarAposta(ev) {
+  async function handleConfirmarAposta(ev) {
     const valor = Number(apostaAtual.valor)
-    if (!valor || valor <= 0) {
-      alert('Informe um valor válido')
-      return
-    }
-    if (valor > saldo) {
-      alert('Saldo insuficiente')
-      return
-    }
-    const novaAposta = {
-      id: Date.now(),
-      clientId: user.id,
-      vencedorId: apostaAtual.vencedorId,
-      odd: apostaAtual.odd,
-      valor,
-    }
+    if (!valor || valor <= 0) { alert('Informe um valor válido'); return }
+    if (valor > saldo)        { alert('Saldo insuficiente'); return }
+    const novaAposta = { id: Date.now(), clientId: user.id, vencedorId: apostaAtual.vencedorId, odd: apostaAtual.odd, valor }
     try {
       await fetch(`${EVENTS}/${ev.id}`, {
         method: 'PATCH',
@@ -101,138 +84,166 @@ function ClienteDashboard() {
       setApostaAtual(null)
       carregarCliente()
       carregarEventos()
-    } catch {
-      alert(ERRO_CONEXAO)
-    }
+    } catch { alert(ERRO) }
   }
 
-  function nomeClube(id) {
-    const clube = clubes.find((c) => c.id === Number(id))
-    return clube ? clube.nome : '?'
-  }
+  function sair() { logout(); navigate('/') }
 
-  function formatarData(valor) {
-    return new Date(valor).toLocaleString('pt-BR')
-  }
-
-  if (!user) {
-    return (
-      <div className="page">
-        <p>Nenhum cliente logado.</p>
-        <Link to="/auth">Ir para o login</Link>
-      </div>
-    )
-  }
-
-  // eventos com apostas abertas: agora entre a abertura das apostas e o início da partida
   const agora = new Date()
-  const abertos = eventos.filter(
-    (ev) =>
-      !ev.fechado &&
-      !ev.resolvido &&
-      new Date(ev.inicioApostas) <= agora &&
-      agora < new Date(ev.dataHoraPartida)
+  const abertos = eventos.filter(ev =>
+    !ev.fechado && !ev.resolvido &&
+    new Date(ev.inicioApostas) <= agora &&
+    agora < new Date(ev.dataHoraPartida)
   )
 
-  // apostas feitas por este cliente (varrendo todos os eventos)
   const minhasApostas = []
-  for (const ev of eventos) {
-    for (const ap of ev.apostas || []) {
-      if (ap.clientId === user.id) {
+  for (const ev of eventos)
+    for (const ap of ev.apostas || [])
+      if (ap.clientId === user.id)
         minhasApostas.push({ ...ap, evento: ev })
-      }
-    }
-  }
+
+  const ganhas   = minhasApostas.filter(a => a.evento.resolvido && a.vencedorId === a.evento.resultado).length
+  const perdidas = minhasApostas.filter(a => a.evento.resolvido && a.vencedorId !== a.evento.resultado).length
 
   return (
-    <div className="page">
-      <header>
-        <h1>Bem-vindo, {user.nome}</h1>
-        <p>Saldo: R$ {saldo.toFixed(2)}</p>
-        <div className="botoes">
-          <button onClick={adicionarSaldo}>Adicionar saldo</button>
-          <button onClick={() => setView('apostas')}>Minhas Apostas</button>
-          <button onClick={() => setView('eventos')}>Eventos abertos</button>
+    <div className="dash-page">
+      {/* ── Sidebar ── */}
+      <aside className="dash-sidebar dash-sidebar--cliente">
+        <div className="dash-sidebar-logo">
+          <span>⚽</span>
+          <strong>BetArena</strong>
         </div>
-      </header>
 
-      {view === 'eventos' && (
-        <>
-          <h2>Eventos abertos</h2>
-          {abertos.length === 0 ? (
-            <p>Nenhum evento aberto no momento.</p>
-          ) : (
-            <ul className="lista-eventos">
-              {abertos.map((ev) => (
-                <li key={ev.id}>
-                  <strong>
-                    {nomeClube(ev.clubeCasaId)} x {nomeClube(ev.clubeForaId)}
-                  </strong>
-                  <p>Partida: {formatarData(ev.dataHoraPartida)}</p>
+        <div className="dash-saldo-card">
+          <span className="dash-saldo-label">Saldo fictício</span>
+          <span className="dash-saldo-valor">R$ {saldo.toFixed(2)}</span>
+          <button className="btn-primary btn-full" onClick={() => setModalSaldo(true)}>
+            + Adicionar saldo
+          </button>
+        </div>
 
-                  {apostaAtual && apostaAtual.eventoId === ev.id ? (
-                    <div>
-                      <p>Palpite: {nomeClube(apostaAtual.vencedorId)}</p>
-                      <p>Odd: {apostaAtual.odd}</p>
-                      <input
-                        type="number"
-                        placeholder="Valor da aposta"
-                        value={apostaAtual.valor}
-                        onChange={(e) =>
-                          setApostaAtual({ ...apostaAtual, valor: e.target.value })
-                        }
-                      />
-                      <button onClick={() => confirmarAposta(ev)}>Confirmar aposta</button>
-                      <button onClick={() => setApostaAtual(null)}>Cancelar</button>
-                    </div>
-                  ) : (
-                    <>
-                      <button onClick={() => escolherVencedor(ev, ev.clubeCasaId)}>
-                        Apostar em {nomeClube(ev.clubeCasaId)}
-                      </button>
-                      <button onClick={() => escolherVencedor(ev, ev.clubeForaId)}>
-                        Apostar em {nomeClube(ev.clubeForaId)}
-                      </button>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
+        <nav className="dash-nav">
+          <button
+            className={`dash-nav-item ${view === 'eventos' ? 'dash-nav-item--ativo' : ''}`}
+            onClick={() => setView('eventos')}
+          >
+            🎯 Eventos abertos
+            {abertos.length > 0 && <span className="dash-badge">{abertos.length}</span>}
+          </button>
+          <button
+            className={`dash-nav-item ${view === 'apostas' ? 'dash-nav-item--ativo' : ''}`}
+            onClick={() => setView('apostas')}
+          >
+            📋 Minhas apostas
+            {minhasApostas.length > 0 && <span className="dash-badge">{minhasApostas.length}</span>}
+          </button>
+          <Link to="/ranking"    className="dash-nav-item">🏆 Ranking</Link>
+          <Link to="/profile"    className="dash-nav-item">👤 Meus dados</Link>
+          <Link to="/regulamento" className="dash-nav-item">📖 Regulamento</Link>
+        </nav>
+
+        <button className="dash-sair" onClick={sair}>← Sair</button>
+      </aside>
+
+      {/* ── Conteúdo principal ── */}
+      <main className="dash-main">
+        {/* Cards de resumo */}
+        <div className="dash-resumo">
+          <div className="dash-resumo-card">
+            <span className="dash-resumo-icon">🎯</span>
+            <div>
+              <span className="dash-resumo-num">{abertos.length}</span>
+              <span className="dash-resumo-label">Eventos abertos</span>
+            </div>
+          </div>
+          <div className="dash-resumo-card">
+            <span className="dash-resumo-icon">📋</span>
+            <div>
+              <span className="dash-resumo-num">{minhasApostas.length}</span>
+              <span className="dash-resumo-label">Total de apostas</span>
+            </div>
+          </div>
+          <div className="dash-resumo-card dash-resumo-card--ganhou">
+            <span className="dash-resumo-icon">🏆</span>
+            <div>
+              <span className="dash-resumo-num">{ganhas}</span>
+              <span className="dash-resumo-label">Apostas ganhas</span>
+            </div>
+          </div>
+          <div className="dash-resumo-card dash-resumo-card--perdeu">
+            <span className="dash-resumo-icon">❌</span>
+            <div>
+              <span className="dash-resumo-num">{perdidas}</span>
+              <span className="dash-resumo-label">Apostas perdidas</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Título da seção */}
+        <div className="dash-secao-header">
+          <h2>{view === 'eventos' ? '🎯 Eventos abertos' : '📋 Minhas apostas'}</h2>
+          <span className="dash-secao-sub">
+            Olá, <strong>{user.nome}</strong>
+          </span>
+        </div>
+
+        {/* Eventos */}
+        {view === 'eventos' && (
+          abertos.length === 0
+            ? <div className="dash-vazio"><span>📭</span><p>Nenhum evento aberto no momento.</p><p>Aguarde o administrador criar novos eventos.</p></div>
+            : <ul className="lista-eventos">
+                {abertos.map(ev => (
+                  <EventoCardCliente
+                    key={ev.id}
+                    evento={ev}
+                    apostaAtual={apostaAtual}
+                    onEscolherVencedor={handleEscolherVencedor}
+                    onConfirmarAposta={handleConfirmarAposta}
+                    onCancelarAposta={() => setApostaAtual(null)}
+                    onMudarValor={val => setApostaAtual({ ...apostaAtual, valor: val })}
+                  />
+                ))}
+              </ul>
+        )}
+
+        {/* Apostas */}
+        {view === 'apostas' && (
+          minhasApostas.length === 0
+            ? <div className="dash-vazio"><span>🎰</span><p>Você ainda não fez nenhuma aposta.</p><button className="btn-primary" onClick={() => setView('eventos')}>Ver eventos abertos</button></div>
+            : <ul className="lista-eventos">
+                {minhasApostas.map(ap => <ApostaItem key={ap.id} aposta={ap} />)}
+              </ul>
+        )}
+      </main>
+
+      {/* ── Modal adicionar saldo ── */}
+      {modalSaldo && (
+        <div className="modal-overlay" onClick={() => setModalSaldo(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>💰 Adicionar saldo fictício</h2>
+            <p>Informe o valor que deseja adicionar à sua conta.</p>
+            <form onSubmit={confirmarSaldo} className="modal-form">
+              <div className="form-group">
+                <label>Valor (R$)</label>
+                <input
+                  type="number"
+                  placeholder="Ex: 100"
+                  min="1"
+                  step="1"
+                  value={valorSaldo}
+                  onChange={e => setValorSaldo(e.target.value)}
+                  autoFocus
+                  required
+                />
+              </div>
+              <div className="modal-acoes">
+                <button type="submit" className="btn-primary">Confirmar</button>
+                <button type="button" className="btn-secondary" onClick={() => setModalSaldo(false)}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
-
-      {view === 'apostas' && (
-        <>
-          <h2>Minhas apostas</h2>
-          {minhasApostas.length === 0 ? (
-            <p>Você ainda não fez apostas.</p>
-          ) : (
-            <ul className="lista-eventos">
-              {minhasApostas.map((ap) => (
-                <li key={ap.id}>
-                  <strong>
-                    {nomeClube(ap.evento.clubeCasaId)} x {nomeClube(ap.evento.clubeForaId)}
-                  </strong>
-                  <p>Palpite: {nomeClube(ap.vencedorId)}</p>
-                  <p>Odd: {ap.odd}</p>
-                  <p>Valor: R$ {Number(ap.valor || 0).toFixed(2)}</p>
-                  {!ap.evento.resolvido ? (
-                    <p>Aguardando resultado</p>
-                  ) : ap.vencedorId === ap.evento.resultado ? (
-                    <p>Ganhou! +R$ {(Number(ap.valor || 0) * ap.odd).toFixed(2)}</p>
-                  ) : (
-                    <p>Perdeu</p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
-      )}
-
-      <Link to="/profile" state={{ user }}>Meus dados</Link>
-      <Link to="/">Sair</Link>
     </div>
   )
 }

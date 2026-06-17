@@ -7,19 +7,73 @@ import AdminLogin from './pages/AdminLogin'
 import ProfileAdmin from './pages/ProfileAdmin'
 import AdminDashboard from './pages/AdminDashboard'
 import ClienteDashboard from './pages/ClienteDashboard'
+import Ranking from './pages/Ranking'
+import Regulamento from './pages/Regulamento'
+import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
 function App() {
   return (
     <Routes>
+      {/* Rotas públicas */}
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Auth />} />
-      <Route path="/profile" element={<ProfileCliente />} />
-      <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
-      <Route path="/admin/cadastro" element={<AdminCadastro />} />
+      <Route path="/admin/cadastro" element={<AdminLogin />} />
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/profile" element={<ProfileAdmin />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+      {/* Rotas protegidas — apenas clientes */}
+      <Route
+        path="/cliente/dashboard"
+        element={
+          <ProtectedRoute perfil="cliente">
+            <ClienteDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute perfil="cliente">
+            <ProfileCliente />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Rotas protegidas — apenas administradores */}
+      <Route
+        path="/admin/profile"
+        element={
+          <ProtectedRoute perfil="administrador">
+            <ProfileAdmin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute perfil="administrador">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Rotas acessíveis por qualquer usuário logado */}
+      <Route
+        path="/ranking"
+        element={
+          <ProtectedRoute>
+            <Ranking />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/regulamento"
+        element={
+          <ProtectedRoute>
+            <Regulamento />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }
