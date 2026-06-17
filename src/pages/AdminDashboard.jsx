@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../contexts/AuthContext'
 import EventoCardAdmin from '../components/EventoCardAdmin'
 import clubes from '../data/clubes.json'
+import { getClient, updateClient } from '../services/clientsService'
+import { getEventsByAdmin, createEvent, updateEvent, deleteEvent } from '../services/eventsService'
 
-const API     = 'http://localhost:3001/events'
-const CLIENTS = 'http://localhost:3001/clients'
-const ERRO    = 'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
+const ERRO = 'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
 function AdminDashboard() {
   const { user, logout } = useAuth()
@@ -22,8 +22,7 @@ function AdminDashboard() {
 
   async function carregarEventos() {
     try {
-      const resposta = await fetch(`${API}?adminId=${user.id}`)
-      const dados = await resposta.json()
+      const dados = await getEventsByAdmin(user.id)
       setEventos(dados)
     } catch { alert(ERRO) }
   }
@@ -44,21 +43,13 @@ function AdminDashboard() {
     if (clubeCasaId === clubeForaId) { alert('Selecione dois clubes diferentes'); return }
     try {
       if (editandoId === null) {
-        await fetch(API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            adminId: user.id,
-            clubeCasaId: Number(clubeCasaId), clubeForaId: Number(clubeForaId),
-            dataHoraPartida, inicioApostas, apostas: [], fechado: false,
-          }),
+        await createEvent({
+          adminId: user.id,
+          clubeCasaId: Number(clubeCasaId), clubeForaId: Number(clubeForaId),
+          dataHoraPartida, inicioApostas, apostas: [], fechado: false,
         })
       } else {
-        await fetch(`${API}/${editandoId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clubeCasaId: Number(clubeCasaId), clubeForaId: Number(clubeForaId), dataHoraPartida, inicioApostas }),
-        })
+        await updateEvent(editandoId, { clubeCasaId: Number(clubeCasaId), clubeForaId: Number(clubeForaId), dataHoraPartida, inicioApostas })
       }
       limparFormulario()
       setView('eventos')
@@ -74,13 +65,13 @@ function AdminDashboard() {
   }
 
   async function handleExcluir(id) {
-    try { await fetch(`${API}/${id}`, { method: 'DELETE' }); carregarEventos() }
+    try { await deleteEvent(id); carregarEventos() }
     catch { alert(ERRO) }
   }
 
   async function handleFechar(ev) {
     try {
-      await fetch(`${API}/${ev.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fechado: true }) })
+      await updateEvent(ev.id, { fechado: true })
       carregarEventos()
     } catch { alert(ERRO) }
   }
@@ -90,17 +81,11 @@ function AdminDashboard() {
     try {
       for (const ap of ev.apostas || []) {
         if (ap.vencedorId === vencedorId) {
-          const cli = await (await fetch(`${CLIENTS}/${ap.clientId}`)).json()
-          await fetch(`${CLIENTS}/${ap.clientId}`, {
-            method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ saldo: (cli.saldo || 0) + (ap.valor || 0) * ap.odd }),
-          })
+          const cli = await getClient(ap.clientId)
+          await updateClient(ap.clientId, { saldo: (cli.saldo || 0) + (ap.valor || 0) * ap.odd })
         }
       }
-      await fetch(`${API}/${ev.id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resolvido: true, resultado: vencedorId }),
-      })
+      await updateEvent(ev.id, { resolvido: true, resultado: vencedorId })
       alert('Resultado gerado! Vencedor: ' + (clubes.find(c => c.id === vencedorId)?.nome || '?'))
       carregarEventos()
     } catch { alert(ERRO) }

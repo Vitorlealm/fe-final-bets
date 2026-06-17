@@ -19,6 +19,16 @@
       "perfil": "cliente",
       "saldo": 0,
       "id": 2
+    },
+    {
+      "nome": "Vitor Leal",
+      "email": "vitorlealm.21@gmail.com",
+      "dataNascimento": "2000-01-20",
+      "cpf": "12800000000",
+      "senha": "123456",
+      "perfil": "cliente",
+      "saldo": 0,
+      "id": 3
     }
   ],
   "admins": [
@@ -30,7 +40,57 @@
       "senha": "ah992723",
       "perfil": "administrador",
       "id": 1
+    },
+    {
+      "nome": "Vitor ADMIN",
+      "email": "vitorlealm.21@gmail.com",
+      "dataNascimento": "2026-06-08",
+      "cpf": "222222222222222222",
+      "senha": "123456",
+      "perfil": "administrador",
+      "id": 2
     }
   ],
-  "events": []
+  "events": [
+    {
+      "adminId": 2,
+      "clubeCasaId": 1,
+      "clubeForaId": 3,
+      "dataHoraPartida": "2026-06-19T13:34",
+      "inicioApostas": "2026-06-17T13:28",
+      "apostas": [
+        {
+          "id": 1781714077953,
+          "clientId": 3,
+          "vencedorId": 3,
+          "odd": 1.61,
+          "valor": 30
+        }
+      ],
+      "fechado": true,
+      "id": 1,
+      "resolvido": true,
+      "resultado": 1
+    },
+    {
+      "adminId": 2,
+      "clubeCasaId": 8,
+      "clubeForaId": 7,
+      "dataHoraPartida": "2026-07-09T17:13",
+      "inicioApostas": "2026-06-16T18:14",
+      "apostas": [
+        {
+          "id": 1781716344963,
+          "clientId": 3,
+          "vencedorId": 8,
+          "odd": 2.45,
+          "valor": 20
+        }
+      ],
+      "fechado": true,
+      "id": 2,
+      "resolvido": true,
+      "resultado": 7
+    }
+  ]
 }

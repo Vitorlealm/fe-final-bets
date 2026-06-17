@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-
-const API = 'http://localhost:3001/clients'
+import { useAuth } from '../contexts/AuthContext'
+import { findClientByEmail, findClientByCpf, createClient, loginClient } from '../services/clientsService'
 
 function Auth() {
   const location = useLocation()
@@ -43,16 +42,12 @@ function Auth() {
     }
     setCarregando(true)
     try {
-      const porEmail = await (await fetch(`${API}?email=${email}`)).json()
+      const porEmail = await findClientByEmail(email)
       if (porEmail.length > 0) { setErro('Este e-mail já está cadastrado.'); return }
-      const porCpf = await (await fetch(`${API}?cpf=${cpf}`)).json()
+      const porCpf = await findClientByCpf(cpf)
       if (porCpf.length > 0) { setErro('Este CPF já está cadastrado.'); return }
 
-      await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, dataNascimento, cpf, senha, perfil: 'cliente', saldo: 0 }),
-      })
+      await createClient({ nome, email, dataNascimento, cpf, senha, perfil: 'cliente', saldo: 0 })
       setErro('')
       trocarAba(true)
       // pequena mensagem de sucesso
@@ -69,8 +64,7 @@ function Auth() {
     setErro('')
     setCarregando(true)
     try {
-      const resposta = await fetch(`${API}?email=${email}&senha=${senha}`)
-      const dados = await resposta.json()
+      const dados = await loginClient(email, senha)
       if (dados.length > 0) {
         login(dados[0])
         navigate('/cliente/dashboard')

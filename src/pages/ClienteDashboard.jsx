@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../contexts/AuthContext'
 import EventoCardCliente from '../components/EventoCardCliente'
 import ApostaItem from '../components/ApostaItem'
+import { getClient, updateClient } from '../services/clientsService'
+import { getEvents, updateEvent } from '../services/eventsService'
 
-const EVENTS  = 'http://localhost:3001/events'
-const CLIENTS = 'http://localhost:3001/clients'
-const ERRO    = 'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
+const ERRO = 'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
 function ClienteDashboard() {
   const { user, login, logout } = useAuth()
@@ -21,7 +21,7 @@ function ClienteDashboard() {
 
   async function carregarCliente() {
     try {
-      const dados = await (await fetch(`${CLIENTS}/${user.id}`)).json()
+      const dados = await getClient(user.id)
       setCliente(dados)
       login(dados)
     } catch { alert(ERRO) }
@@ -29,7 +29,7 @@ function ClienteDashboard() {
 
   async function carregarEventos() {
     try {
-      const dados = await (await fetch(EVENTS)).json()
+      const dados = await getEvents()
       setEventos(dados)
     } catch { alert(ERRO) }
   }
@@ -46,11 +46,7 @@ function ClienteDashboard() {
     const valor = Number(valorSaldo)
     if (!valor || valor <= 0) return
     try {
-      await fetch(`${CLIENTS}/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ saldo: saldo + valor }),
-      })
+      await updateClient(user.id, { saldo: saldo + valor })
       setModalSaldo(false)
       setValorSaldo('')
       carregarCliente()
@@ -71,16 +67,8 @@ function ClienteDashboard() {
     if (valor > saldo)        { alert('Saldo insuficiente'); return }
     const novaAposta = { id: Date.now(), clientId: user.id, vencedorId: apostaAtual.vencedorId, odd: apostaAtual.odd, valor }
     try {
-      await fetch(`${EVENTS}/${ev.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apostas: [...(ev.apostas || []), novaAposta] }),
-      })
-      await fetch(`${CLIENTS}/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ saldo: saldo - valor }),
-      })
+      await updateEvent(ev.id, { apostas: [...(ev.apostas || []), novaAposta] })
+      await updateClient(user.id, { saldo: saldo - valor })
       setApostaAtual(null)
       carregarCliente()
       carregarEventos()

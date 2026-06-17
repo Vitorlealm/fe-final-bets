@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const API = 'http://localhost:3001/admins'
+import { findAdminByEmail, findAdminByCpf, createAdmin } from '../services/adminsService'
 
 function AdminCadastro() {
   const navigate = useNavigate()
@@ -16,22 +15,18 @@ function AdminCadastro() {
     e.preventDefault()
     try {
       // email e cpf devem ser únicos na lista de administradores
-      const porEmail = await (await fetch(`${API}?email=${email}`)).json()
+      const porEmail = await findAdminByEmail(email)
       if (porEmail.length > 0) {
         alert('Email já cadastrado')
         return
       }
-      const porCpf = await (await fetch(`${API}?cpf=${cpf}`)).json()
+      const porCpf = await findAdminByCpf(cpf)
       if (porCpf.length > 0) {
         alert('CPF já cadastrado')
         return
       }
 
-      await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, dataNascimento, cpf, senha, tipo: 'administrador' }),
-      })
+      await createAdmin({ nome, email, dataNascimento, cpf, senha, tipo: 'administrador' })
       alert('Administrador cadastrado!')
       navigate('/admin/login')
     } catch {

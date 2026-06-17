@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../contexts/AuthContext'
+import { getClients } from '../services/clientsService'
+import { getEvents } from '../services/eventsService'
 
-const CLIENTS = 'http://localhost:3001/clients'
-const EVENTS = 'http://localhost:3001/events'
 const ERRO_CONEXAO =
   'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
@@ -26,10 +26,7 @@ function Ranking() {
   async function carregarRanking() {
     try {
       setCarregando(true)
-      const [clientes, eventos] = await Promise.all([
-        fetch(CLIENTS).then((r) => r.json()),
-        fetch(EVENTS).then((r) => r.json()),
-      ])
+      const [clientes, eventos] = await Promise.all([getClients(), getEvents()])
 
       // Calcula total ganho por cliente varrendo apostas resolvidas
       const ganhosPorCliente = {}
