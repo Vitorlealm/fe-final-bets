@@ -18,6 +18,7 @@ function Auth() {
   const [dataNascimento, setDataNascimento] = useState('')
   const [cpf, setCpf] = useState('')
   const [senha, setSenha] = useState('')
+  const [confirmarSenha, setConfirmarSenha] = useState('')
 
   function trocarAba(paraLogin) {
     setIsLogin(paraLogin)
@@ -36,6 +37,10 @@ function Auth() {
   async function cadastrar(e) {
     e.preventDefault()
     setErro('')
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem. Verifique e tente novamente.')
+      return
+    }
     setCarregando(true)
     try {
       const porEmail = await (await fetch(`${API}?email=${email}`)).json()
@@ -174,6 +179,25 @@ function Auth() {
                 </div>
               )}
             </div>
+
+            {!isLogin && (
+              <div className="form-group">
+                <label>Confirmar senha</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  required
+                />
+                {confirmarSenha && senha !== confirmarSenha && (
+                  <span className="campo-erro">As senhas não coincidem</span>
+                )}
+                {confirmarSenha && senha === confirmarSenha && (
+                  <span className="campo-ok">✓ Senhas coincidem</span>
+                )}
+              </div>
+            )}
 
             <button type="submit" className="btn-primary btn-full" disabled={carregando}>
               {carregando ? '⏳ Aguarde...' : isLogin ? 'Entrar' : 'Criar minha conta'}

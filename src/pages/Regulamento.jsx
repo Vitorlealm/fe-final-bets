@@ -1,20 +1,34 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import Navbar from '../components/Navbar'
 
 function Regulamento() {
   const { user } = useAuth()
 
-  const voltarRota = user?.perfil === 'administrador' || user?.tipo === 'administrador'
+  // Destino do botão de voltar depende do estado de login
+  const perfilUsuario = user?.perfil || user?.tipo
+  const voltarRota = perfilUsuario === 'administrador'
     ? '/admin/dashboard'
-    : '/cliente/dashboard'
+    : perfilUsuario === 'cliente'
+      ? '/cliente/dashboard'
+      : '/'
+
+  const voltarLabel = perfilUsuario ? '← Voltar ao dashboard' : '← Voltar à tela inicial'
 
   return (
     <div className="page">
-      <Navbar
-        titulo="📋 Regulamento"
-        subtitulo="Regras de uso da plataforma"
-        links={[{ to: voltarRota, label: '← Voltar ao dashboard' }]}
-      />
+      {/* Cabeçalho da página */}
+      <div className="regulamento-header">
+        <div className="regulamento-header-info">
+          <span className="regulamento-header-icon">📋</span>
+          <div>
+            <h1 className="regulamento-titulo">Regulamento</h1>
+            <p className="regulamento-header-sub">Regras de uso da plataforma BetArena</p>
+          </div>
+        </div>
+        <Link to={voltarRota} className="btn-secondary regulamento-voltar-btn">
+          {voltarLabel}
+        </Link>
+      </div>
 
       <div className="regulamento">
         <p className="regulamento-aviso">

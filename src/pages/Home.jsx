@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Home() {
   const navigate = useNavigate()
@@ -63,6 +63,9 @@ function Home() {
       <p className="home-aviso">
         ⚠️ Plataforma de uso exclusivamente acadêmico. Todos os valores são fictícios.
       </p>
+      <Link to="/regulamento" className="home-regulamento-link">
+        📋 Ler o regulamento
+      </Link>
     </div>
   )
 }

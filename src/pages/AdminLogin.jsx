@@ -17,6 +17,7 @@ function AdminLogin() {
   const [dataNascimento, setDataNascimento] = useState('')
   const [cpf, setCpf] = useState('')
   const [senha, setSenha] = useState('')
+  const [confirmarSenha, setConfirmarSenha] = useState('')
 
   function trocarAba(paraLogin) {
     setIsLogin(paraLogin)
@@ -26,6 +27,10 @@ function AdminLogin() {
   async function cadastrar(e) {
     e.preventDefault()
     setErro('')
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem. Verifique e tente novamente.')
+      return
+    }
     setCarregando(true)
     try {
       const porEmail = await (await fetch(`${API}?email=${email}`)).json()
@@ -147,6 +152,25 @@ function AdminLogin() {
               <label>Senha</label>
               <input type="password" placeholder="••••••••" value={senha} onChange={(e) => setSenha(e.target.value)} required />
             </div>
+
+            {!isLogin && (
+              <div className="form-group">
+                <label>Confirmar senha</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  required
+                />
+                {confirmarSenha && senha !== confirmarSenha && (
+                  <span className="campo-erro">As senhas não coincidem</span>
+                )}
+                {confirmarSenha && senha === confirmarSenha && (
+                  <span className="campo-ok">✓ Senhas coincidem</span>
+                )}
+              </div>
+            )}
 
             <button type="submit" className="btn-primary btn-full btn-admin" disabled={carregando}>
               {carregando ? '⏳ Aguarde...' : isLogin ? 'Entrar como Admin' : 'Criar conta admin'}

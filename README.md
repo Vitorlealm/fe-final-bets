@@ -7,7 +7,7 @@
 
 ## 👥 Integrantes
 
-- Cassiano (e dupla)
+- Lucas Cassiano e Vitor Leal
 
 ---
 

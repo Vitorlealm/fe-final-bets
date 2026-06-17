@@ -9,6 +9,16 @@
       "perfil": "cliente",
       "saldo": 0,
       "id": 1
+    },
+    {
+      "nome": "Teste",
+      "email": "teste@gmaio.com",
+      "dataNascimento": "2003-03-28",
+      "cpf": "09322575697",
+      "senha": "teste2803",
+      "perfil": "cliente",
+      "saldo": 0,
+      "id": 2
     }
   ],
   "admins": [

@@ -114,6 +114,12 @@
   text-align: center;
 }
 
+.home-regulamento-link {
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+}
+
 /* ── Auth (login/cadastro) ───────────────────── */
 .auth-page {
   display: flex;
@@ -337,6 +343,18 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.campo-erro {
+  font-size: 12px;
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+.campo-ok {
+  font-size: 12px;
+  color: #38a169;
+  font-weight: 500;
 }
 
 .auth-rodape {
@@ -699,6 +717,47 @@ input:focus, select:focus {
 }
 
 /* ── Regulamento ─────────────────────────────── */
+.regulamento-header {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.regulamento-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.regulamento-header-icon { font-size: 32px; line-height: 1; }
+
+.regulamento-titulo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.regulamento-header-sub {
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+}
+
+.regulamento-voltar-btn {
+  font-size: 13px;
+  padding: 7px 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 .regulamento {
   width: 100%;
   max-width: 720px;
