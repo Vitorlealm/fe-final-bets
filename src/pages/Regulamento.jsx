@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext'
 function Regulamento() {
   const { user } = useAuth()
 
-  // Destino do botão de voltar depende do estado de login
   const perfilUsuario = user?.perfil || user?.tipo
   const voltarRota = perfilUsuario === 'administrador'
     ? '/admin/dashboard'
@@ -16,7 +15,6 @@ function Regulamento() {
 
   return (
     <div className="container my-4">
-      {/* Cabeçalho da página */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 border-bottom pb-3 mb-3">
         <div>
           <h1 className="h3 mb-0">📋 Regulamento</h1>

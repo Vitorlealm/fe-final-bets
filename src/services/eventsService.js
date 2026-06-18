@@ -14,8 +14,6 @@ export function createEvent(data) {
   return send(RES, 'POST', data)
 }
 
-// Cobre editar, fechar ({ fechado: true }), gravar resultado ({ resolvido, resultado })
-// e anexar aposta ({ apostas: [...] }) — o corpo do patch é montado pelo chamador.
 export function updateEvent(id, patch) {
   return send(`${RES}/${id}`, 'PATCH', patch)
 }

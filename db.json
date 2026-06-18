@@ -27,7 +27,7 @@
       "cpf": "12800000000",
       "senha": "123456",
       "perfil": "cliente",
-      "saldo": 0,
+      "saldo": 102.08,
       "id": 3
     }
   ],
@@ -91,6 +91,26 @@
       "id": 2,
       "resolvido": true,
       "resultado": 7
+    },
+    {
+      "adminId": 2,
+      "clubeCasaId": 4,
+      "clubeForaId": 5,
+      "dataHoraPartida": "2026-06-25T01:19",
+      "inicioApostas": "2026-06-16T23:17",
+      "apostas": [
+        {
+          "id": 1781738103653,
+          "clientId": 3,
+          "vencedorId": 4,
+          "odd": 1.52,
+          "valor": 4
+        }
+      ],
+      "fechado": true,
+      "id": 3,
+      "resolvido": true,
+      "resultado": 4
     }
   ]
 }

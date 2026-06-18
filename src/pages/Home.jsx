@@ -12,7 +12,6 @@ function Home() {
       </div>
 
       <div className="row justify-content-center g-4">
-        {/* Card Jogador */}
         <div className="col-12 col-md-5">
           <div className="card h-100 shadow-sm">
             <div className="card-body d-flex flex-column">
@@ -33,7 +32,6 @@ function Home() {
           </div>
         </div>
 
-        {/* Card Administrador */}
         <div className="col-12 col-md-5">
           <div className="card h-100 shadow-sm">
             <div className="card-body d-flex flex-column">

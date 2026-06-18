@@ -24,7 +24,6 @@ function Auth() {
     setErro('')
   }
 
-  // Classifica a força da senha pelo tamanho (nível 1 a 3) e devolve a cor do Bootstrap.
   function forcaSenha(s) {
     if (s.length === 0) return null
     if (s.length < 6) return { nivel: 1, texto: 'Fraca', classe: 'bg-danger' }
@@ -51,7 +50,6 @@ function Auth() {
       await createClient({ nome, email, dataNascimento, cpf, senha, perfil: 'cliente', saldo: 0 })
       setErro('')
       trocarAba(true)
-      // pequena mensagem de sucesso
       setErro('✅ Cadastro realizado! Faça login para continuar.')
     } catch {
       setErro('Não foi possível conectar à API. Verifique se o servidor está rodando.')
@@ -88,7 +86,6 @@ function Auth() {
             {isLogin ? 'Entre com suas credenciais para continuar' : 'Preencha os dados abaixo'}
           </p>
 
-          {/* Abas Login / Cadastro */}
           <ul className="nav nav-tabs mb-3">
             <li className="nav-item">
               <button type="button" className={`nav-link ${isLogin ? 'active' : ''}`} onClick={() => trocarAba(true)}>

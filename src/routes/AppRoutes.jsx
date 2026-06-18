@@ -13,14 +13,12 @@ import ProtectedRoute from './ProtectedRoute'
 function AppRoutes() {
   return (
     <Routes>
-      {/* Rotas públicas */}
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/admin/cadastro" element={<AdminLogin />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/regulamento" element={<Regulamento />} />
 
-      {/* Rotas protegidas — apenas clientes */}
       <Route
         path="/cliente/dashboard"
         element={
@@ -38,7 +36,6 @@ function AppRoutes() {
         }
       />
 
-      {/* Rotas protegidas — apenas administradores */}
       <Route
         path="/admin/profile"
         element={
@@ -56,7 +53,6 @@ function AppRoutes() {
         }
       />
 
-      {/* Rotas acessíveis por qualquer usuário logado */}
       <Route
         path="/ranking"
         element={

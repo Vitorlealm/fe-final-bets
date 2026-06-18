@@ -7,7 +7,6 @@ import { getEvents } from '../services/eventsService'
 const ERRO_CONEXAO =
   'Não foi possível conectar à API. Verifique se o servidor está rodando (npm run server).'
 
-// Medalhas e títulos para o pódio
 const PREMIACOES = [
   { posicao: 1, medalha: '🥇', titulo: 'Campeão das Apostas', bonus: 500 },
   { posicao: 2, medalha: '🥈', titulo: 'Vice-Campeão', bonus: 250 },
@@ -24,7 +23,6 @@ function Ranking() {
       setCarregando(true)
       const [clientes, eventos] = await Promise.all([getClients(), getEvents()])
 
-      // Calcula total ganho por cliente varrendo apostas resolvidas
       const ganhosPorCliente = {}
       for (const ev of eventos) {
         if (!ev.resolvido) continue
@@ -41,7 +39,6 @@ function Ranking() {
         }
       }
 
-      // Monta lista ordenada por ganhos
       const lista = clientes
         .map((c) => ({
           id: c.id,
@@ -89,7 +86,6 @@ function Ranking() {
         <p>Nenhuma aposta resolvida ainda. O ranking será atualizado após os primeiros resultados.</p>
       ) : (
         <>
-          {/* Pódio */}
           {podio.length > 0 && (
             <section className="mb-4">
               <h2 className="h5">Pódio</h2>
@@ -121,7 +117,6 @@ function Ranking() {
             </section>
           )}
 
-          {/* Tabela completa */}
           <section>
             <h2 className="h5">Classificação Geral</h2>
             <div className="table-responsive">

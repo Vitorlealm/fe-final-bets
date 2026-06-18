@@ -53,7 +53,6 @@ function ClienteDashboard() {
     } catch { alert(ERRO) }
   }
 
-  // Gera uma odd aleatória entre 1.5 e 5.0 (com 2 casas decimais).
   function calcularOdd() {
     const min = 1.5
     const max = 5
@@ -65,6 +64,7 @@ function ClienteDashboard() {
   }
 
   async function handleConfirmarAposta(ev) {
+    if ((ev.apostas || []).some(a => a.clientId === user.id)) { alert('Você já apostou neste evento'); return }
     const valor = Number(apostaAtual.valor)
     if (!valor || valor <= 0) { alert('Informe um valor válido'); return }
     if (valor > saldo)        { alert('Saldo insuficiente'); return }
@@ -98,7 +98,6 @@ function ClienteDashboard() {
 
   return (
     <>
-      {/* Navbar no topo */}
       <nav className="navbar navbar-expand bg-dark navbar-dark">
         <div className="container">
           <span className="navbar-brand">⚽ BetArena</span>
@@ -112,7 +111,6 @@ function ClienteDashboard() {
       </nav>
 
       <div className="container my-4">
-        {/* Saudação + saldo */}
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
           <h1 className="h4 mb-0">Olá, {user.nome} 👋</h1>
           <div className="card">
@@ -126,7 +124,6 @@ function ClienteDashboard() {
           </div>
         </div>
 
-        {/* Cards de resumo */}
         <div className="row row-cols-2 row-cols-md-4 g-3 mb-4">
           <div className="col">
             <div className="card text-center h-100"><div className="card-body">
@@ -158,7 +155,6 @@ function ClienteDashboard() {
           </div>
         </div>
 
-        {/* Abas de visualização */}
         <ul className="nav nav-pills mb-3">
           <li className="nav-item">
             <button className={`nav-link ${view === 'eventos' ? 'active' : ''}`} onClick={() => setView('eventos')}>
@@ -172,7 +168,6 @@ function ClienteDashboard() {
           </li>
         </ul>
 
-        {/* Eventos */}
         {view === 'eventos' && (
           abertos.length === 0 ? (
             <div className="text-center text-muted border rounded p-4">
@@ -187,6 +182,7 @@ function ClienteDashboard() {
                   key={ev.id}
                   evento={ev}
                   apostaAtual={apostaAtual}
+                  jaApostou={(ev.apostas || []).some(a => a.clientId === user.id)}
                   onEscolherVencedor={handleEscolherVencedor}
                   onConfirmarAposta={handleConfirmarAposta}
                   onCancelarAposta={() => setApostaAtual(null)}
@@ -197,7 +193,6 @@ function ClienteDashboard() {
           )
         )}
 
-        {/* Apostas */}
         {view === 'apostas' && (
           minhasApostas.length === 0 ? (
             <div className="text-center text-muted border rounded p-4">
@@ -213,7 +208,6 @@ function ClienteDashboard() {
         )}
       </div>
 
-      {/* Modal adicionar saldo */}
       {modalSaldo && (
         <>
           <div className="modal d-block" tabIndex="-1" onClick={() => setModalSaldo(false)}>

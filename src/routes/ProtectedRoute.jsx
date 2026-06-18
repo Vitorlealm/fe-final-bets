@@ -1,11 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
-/**
- * Protege uma rota verificando se há usuário logado e se o perfil bate.
- * Aceita tanto o campo `perfil` quanto o campo `tipo` para compatibilidade.
- * @param {string} perfil - 'cliente' | 'administrador' | undefined (qualquer perfil logado)
- */
 function ProtectedRoute({ children, perfil }) {
   const { user } = useAuth()
 
@@ -13,7 +8,6 @@ function ProtectedRoute({ children, perfil }) {
     return <Navigate to="/" replace />
   }
 
-  // Aceita tanto `perfil` quanto `tipo` (campo legado)
   const perfilUsuario = user.perfil || user.tipo
 
   if (perfil && perfilUsuario !== perfil) {

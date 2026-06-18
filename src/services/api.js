@@ -1,7 +1,3 @@
-// Camada base de acesso à API (json-server).
-// Mantém o comportamento original dos fetch inline:
-//  - getJson espelha exatamente `(await fetch(x)).json()` — não inspeciona res.ok nem lança em status != 2xx;
-//  - send/del retornam o Response SEM consumir o body (os chamadores apenas dão await e ignoram a resposta).
 export const API_BASE = 'http://localhost:3001'
 
 export async function getJson(path) {

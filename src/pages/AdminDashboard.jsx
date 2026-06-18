@@ -93,14 +93,12 @@ function AdminDashboard() {
 
   function sair() { logout(); navigate('/') }
 
-  // Estatísticas rápidas
   const totalApostas  = eventos.reduce((acc, ev) => acc + (ev.apostas || []).length, 0)
   const abertos       = eventos.filter(ev => !ev.fechado && !ev.resolvido).length
   const resolvidos    = eventos.filter(ev => ev.resolvido).length
 
   return (
     <>
-      {/* Navbar no topo (amarela = área administrativa) */}
       <nav className="navbar navbar-expand bg-warning">
         <div className="container">
           <span className="navbar-brand">🛡️ BetArena Admin</span>
@@ -113,13 +111,11 @@ function AdminDashboard() {
       </nav>
 
       <div className="container my-4">
-        {/* Cabeçalho */}
         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
           <h1 className="h4 mb-0">Olá, {user.nome}</h1>
           <span className="badge bg-warning text-dark fs-6">🛡️ Administrador</span>
         </div>
 
-        {/* Cards de resumo */}
         <div className="row row-cols-2 row-cols-md-4 g-3 mb-4">
           <div className="col"><div className="card text-center h-100"><div className="card-body">
             <div className="fs-3">📋</div><div className="fs-4 fw-bold">{eventos.length}</div><div className="text-muted small">Total de eventos</div>
@@ -135,7 +131,6 @@ function AdminDashboard() {
           </div></div></div>
         </div>
 
-        {/* Abas: lista x novo */}
         <ul className="nav nav-pills mb-3">
           <li className="nav-item">
             <button className={`nav-link ${view === 'eventos' ? 'active' : ''}`} onClick={() => setView('eventos')}>
@@ -149,7 +144,6 @@ function AdminDashboard() {
           </li>
         </ul>
 
-        {/* Formulário novo/editar evento */}
         {view === 'novo' && (
           <div className="card mb-4">
             <div className="card-body">
@@ -201,7 +195,6 @@ function AdminDashboard() {
           </div>
         )}
 
-        {/* Lista de eventos */}
         {view === 'eventos' && (
           <>
             <div className="d-flex justify-content-between align-items-center mb-3">

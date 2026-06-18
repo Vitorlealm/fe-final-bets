@@ -2,7 +2,6 @@ import { getJson, send } from './api'
 
 const RES = '/clients'
 
-// GETs de filtro retornam array; GET por id retorna objeto.
 export function findClientByEmail(email) {
   return getJson(`${RES}?email=${email}`)
 }

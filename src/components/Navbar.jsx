@@ -1,13 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
-/**
- * Barra de navegação reutilizável (Bootstrap).
- * Recebe um array de `links` e `acoes` para renderizar os botões corretos por perfil.
- *
- * links: [{ to: '/rota', label: 'Texto' }]
- * acoes: [{ label: 'Texto', onClick: fn }]
- */
 function Navbar({ titulo, subtitulo, links = [], acoes = [], onSair }) {
   const { logout } = useAuth()
   const navigate = useNavigate()

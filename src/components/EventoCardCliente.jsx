@@ -1,6 +1,6 @@
 import { nomeClube, formatarData } from '../utils/helpers'
 
-function EventoCardCliente({ evento, apostaAtual, onEscolherVencedor, onConfirmarAposta, onCancelarAposta, onMudarValor }) {
+function EventoCardCliente({ evento, apostaAtual, jaApostou, onEscolherVencedor, onConfirmarAposta, onCancelarAposta, onMudarValor }) {
   const { clubeCasaId, clubeForaId, dataHoraPartida } = evento
   const apostandoNeste = apostaAtual && apostaAtual.eventoId === evento.id
 
@@ -12,14 +12,12 @@ function EventoCardCliente({ evento, apostaAtual, onEscolherVencedor, onConfirma
           <span className="text-muted small">⚽ {formatarData(dataHoraPartida)}</span>
         </div>
 
-        {/* Times */}
         <div className="d-flex align-items-center justify-content-center gap-3 my-3">
           <span className="fw-bold fs-5">{nomeClube(clubeCasaId)}</span>
           <span className="badge bg-light text-dark">VS</span>
           <span className="fw-bold fs-5">{nomeClube(clubeForaId)}</span>
         </div>
 
-        {/* Fluxo de aposta */}
         {apostandoNeste ? (
           <div className="border rounded p-3 bg-light">
             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -54,6 +52,8 @@ function EventoCardCliente({ evento, apostaAtual, onEscolherVencedor, onConfirma
               <button className="btn btn-outline-secondary" onClick={onCancelarAposta}>Cancelar</button>
             </div>
           </div>
+        ) : jaApostou ? (
+          <div className="alert alert-secondary mb-0 py-2 text-center">✅ Você já apostou neste evento</div>
         ) : (
           <div className="d-flex gap-2">
             <button className="btn btn-outline-primary flex-fill" onClick={() => onEscolherVencedor(evento, clubeCasaId)}>

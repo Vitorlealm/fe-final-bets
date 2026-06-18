@@ -78,7 +78,6 @@ function AdminLogin() {
             {isLogin ? 'Entre com suas credenciais de administrador' : 'Preencha os dados para criar uma conta'}
           </p>
 
-          {/* Abas Login / Cadastro */}
           <ul className="nav nav-tabs mb-3">
             <li className="nav-item">
               <button type="button" className={`nav-link ${isLogin ? 'active' : ''}`} onClick={() => trocarAba(true)}>
