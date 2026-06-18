@@ -76,7 +76,7 @@ Painel exclusivo para administradores com estatísticas gerais da plataforma: to
 git clone <url-do-repositorio>
 
 # Entre na pasta do projeto
-cd fe-final-bets-main
+cd fe-final-bets
 
 # Instale as dependências
 npm install
